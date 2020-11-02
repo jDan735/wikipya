@@ -1,17 +1,17 @@
 # 📚 wikipya
 A simple python library for search pages and/or images in Wikipedia
 
-## 🚀 Start
-To start, run this code:
+## 🚀 Install
+To install, run this code:
 ```
 pip install wikipya
 ```
-or you can install module from source code:
+### 📦 Install module from source code
 ```
 python setup.py install
 ```
 
-## Usage
+## 🔩 Usage
 
 ```python
 from wikipya.core import Wikipya
@@ -30,6 +30,18 @@ print(w.getPage("Камень"))
     ['Библиотека Российской академии наук', 717597],
     ['Бан (Интернет)', 61853]
 ]
+```
+
+### 🖼 getImageByPageName
+```python
+>>> w.getImageByPageName("Камень")
+```
+```python
+{
+    'source': 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Two-parts_stone_nikogda_takih_ne_videl_vot.JPG/1000px-Two-parts_stone_nikogda_takih_ne_videl_vot.JPG',
+    'width': 1000,
+    'height': 687
+}
 ```
 
 ### 🖼 getImagesByPageName

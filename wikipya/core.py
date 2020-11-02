@@ -92,7 +92,7 @@ class Wikipya:
         pageid = self._getLastItem(image_info)
 
         try:
-            return image_info[pageid]["thumbnail"]["source"]
+            return image_info[pageid]["thumbnail"]
 
         except KeyError:
             return -1
@@ -129,7 +129,8 @@ class Wikipya:
         text = ""
 
         if p.text.find("означать:") != -1 or \
-           p.text.find(f"{title}:") != -1:
+           p.text.find(f"{title}:") != -1 or \
+           p.text.find("— многозначный термин, означающий:") != -1:
             for tag in soup.find_all("p"):
                 text += tag.text
 

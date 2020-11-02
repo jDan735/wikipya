@@ -1,2 +1,1 @@
-__version__ = "1.0.2"
-from .core import Wikipya
+__version__ = "1.0.3"

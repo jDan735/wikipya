@@ -1,13 +1,26 @@
 # 📚 wikipya
 A simple python library for search pages and/or images in Wikipedia
 
-## Методы
+## 🚀 Start
+To start, run this code:
+```
+pip install wikipya
+```
+or you can install module from source code:
+```
+python setup.py install
+```
+
+## Usage
+
 ```python
 from wikipya.core import Wikipya
 w = Wikipya("ru")
+print(w.getPage("Камень"))
 ```
 
-### search
+## 🛠 Methods
+### 🔍 search
 ```python
 >>> w.search("бан", limit=3)
 ```
@@ -19,7 +32,15 @@ w = Wikipya("ru")
 ]
 ```
 
-### getPage
+### 🖼 getImagesByPageName
+```python
+>>> w.getImagesByPageName("Камень")
+```
+```python
+{'batchcomplete': '', 'query': {'pages': {'2409325': {'pageid': 2409325, 'ns': 0, 'title': 'Камень', 'original': {'source': 'https://upload.wikimedia.org/wikipedia/commons/0/0c/Two-parts_stone_nikogda_takih_ne_videl_vot.JPG', 'width': 2173, 'height': 1492}}}}}
+```
+
+### 📜 getPage
 ```python
 >>> w.getPage("Бан (Интернет)")
 ```
@@ -28,15 +49,7 @@ w = Wikipya("ru")
 </p><p>Бан обычно действует в рамках одного веб-сайта, группы (паблика) или личной страницы. Круг запретных действий, за которые на пользователя налагается бан, устанавливаются владельцами этого сайта.</p></body></html>
 ```
 
-### getImagesByPageName
-```python
->>> w.getImagesByPageName("Камень")
-```
-```python
-{'batchcomplete': '', 'query': {'pages': {'2409325': {'pageid': 2409325, 'ns': 0, 'title': 'Камень', 'original': {'source': 'https://upload.wikimedia.org/wikipedia/commons/0/0c/Two-parts_stone_nikogda_takih_ne_videl_vot.JPG', 'width': 2173, 'height': 1492}}}}}
-```
-
-### parsePage
+### 📒 parsePage
 ```python
 >>> w.parsePage(w.getPage("Бан (Интернет)"))
 ```

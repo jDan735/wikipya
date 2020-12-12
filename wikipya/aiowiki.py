@@ -49,8 +49,8 @@ class Wikipya:
 
         return result
 
-    def getPageNameById(self, id_):
-        data = self._get({"pageids": id_})
+    async def getPageNameById(self, id_):
+        data = await self._get({"pageids": id_})
 
         try:
             return data["query"]["pages"][str(id_)]["title"]

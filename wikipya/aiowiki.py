@@ -35,8 +35,6 @@ class Wikipya:
                                 "srprop": "size"
                                 })
 
-        print(data)
-
         if len(data["query"]["search"]) == 0:
             return -1
 

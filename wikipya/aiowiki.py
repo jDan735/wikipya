@@ -35,6 +35,8 @@ class Wikipya:
                                 "srprop": "size"
                                 })
 
+        print(data)
+
         if len(data["query"]["search"]) == 0:
             return -1
 
@@ -48,6 +50,15 @@ class Wikipya:
             result.append(page)
 
         return result
+
+    async def opensearch(self, query, limit=1):
+        data = await self._get({
+                   "action": "opensearch",
+                   "search": query,
+                   "limit": 1
+               })
+
+        return data
 
     async def getPageNameById(self, id_):
         data = await self._get({"pageids": id_})
@@ -116,7 +127,7 @@ class Wikipya:
             t.replace_with("")
 
         if len(soup.find_all("p")) == 0:
-            return "Беды с башкой 102"
+            return soup.text
         else:
             p = soup.find_all("p")[0]
 

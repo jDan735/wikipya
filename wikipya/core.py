@@ -50,6 +50,15 @@ class Wikipya:
 
         return result
 
+    async def opensearch(self, query, limit=1):
+        data = self._get({
+                   "action": "opensearch",
+                   "search": query,
+                   "limit": 1
+               })
+
+        return data
+
     def getPageNameById(self, id_):
         data = self._get({"pageids": id_})
 
@@ -104,8 +113,12 @@ class Wikipya:
             "titles": title
         })
 
-    def parsePage(self, soup):
-        title = "Бан"
+    def parsePage(self, soup, title=""):
+        if len(soup.find_all("p")) == 0:
+            return soup.text
+        else:
+            p = soup.find_all("p")[0]
+
         for tag in soup.find_all("p"):
             if re.match(r"\s", tag.text):
                 tag.replace_with("")
@@ -115,11 +128,6 @@ class Wikipya:
 
         for t in soup.findAll("semantics"):
             t.replace_with("")
-
-        if len(soup.find_all("p")) == 0:
-            return "Беды с башкой 102"
-        else:
-            p = soup.find_all("p")[0]
 
         bold_text = []
 

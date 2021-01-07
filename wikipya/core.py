@@ -28,6 +28,32 @@ class Wikipya:
 
         return json.loads(r.text)
 
+    def _pretty_list(self, list_):
+        return list_.replace("0", "0️⃣") \
+                    .replace("1", "1️⃣") \
+                    .replace("2", "2️⃣") \
+                    .replace("3", "3️⃣") \
+                    .replace("4", "4️⃣") \
+                    .replace("5", "5️⃣") \
+                    .replace("6", "6️⃣") \
+                    .replace("7", "7️⃣") \
+                    .replace("8", "8️⃣") \
+                    .replace("9", "9️⃣")
+
+    def _prepare_list(self, soup, text=""):
+        for tag in soup.find_all("p"):
+            text += tag.text
+
+        text += "\n"
+
+        for tag in soup.find_all("li"):
+            ind = str(soup.find_all("li").index(tag) + 1)
+            ind = self._pretty_list(ind)
+
+            text += ind + " " + tag.text + "\n"
+
+        return text
+
     def search(self, query, limit=1):
         data = self._get({
             "list": "search",
@@ -85,7 +111,8 @@ class Wikipya:
         if "-1" in result:
             return -1
 
-        soup = BeautifulSoup(result[self._getLastItem(result)]["extract"], "lxml")
+        soup = BeautifulSoup(result[self._getLastItem(result)]["extract"],
+                             "lxml")
 
         return soup
 
@@ -114,81 +141,37 @@ class Wikipya:
         })
 
     def parsePage(self, soup, title=""):
+        for tag in soup.find_all("p"):
+            if re.match(r"\s", tag.text):
+                tag.replace_with("")
+
+        for item in ["math", "semantics"]:
+            for t in soup.findAll(item):
+                t.replace_with("")
+
         if len(soup.find_all("p")) == 0:
             return soup.text
         else:
             p = soup.find_all("p")[0]
 
-        for tag in soup.find_all("p"):
-            if re.match(r"\s", tag.text):
-                tag.replace_with("")
-
-        for t in soup.findAll("math"):
-            t.replace_with("")
-
-        for t in soup.findAll("semantics"):
-            t.replace_with("")
-
-        bold_text = []
+        bold_words = []
 
         for tag in p.find_all("b"):
-            bold_text.append(tag.text)
+            bold_words.append(tag.text)
 
         text = ""
 
         if p.text.find("означать:") != -1 or \
-           p.text.find(f"{title}:") != -1 or \
+           p.text.find("refer to:") != -1 or \
            p.text.find("— многозначный термин, означающий:") != -1:
-            for tag in soup.find_all("p"):
-                text += tag.text
-
-            text += "\n"
-
-            for tag in soup.find_all("li"):
-                ind = str(soup.find_all("li").index(tag) + 1)
-
-                ind = ind.replace("0", "0️⃣") \
-                         .replace("1", "1️⃣") \
-                         .replace("2", "2️⃣") \
-                         .replace("3", "3️⃣") \
-                         .replace("4", "4️⃣") \
-                         .replace("5", "5️⃣") \
-                         .replace("6", "6️⃣") \
-                         .replace("7", "7️⃣") \
-                         .replace("8", "8️⃣") \
-                         .replace("9", "9️⃣")
-
-                text += ind + " " + tag.text + "\n"
+            text = self._prepare_list(soup)
 
         else:
             text = re.sub(r"\[.{,}\] ", "", p.text)
 
-        for bold in bold_text:
+        for bold in bold_words:
             if text == f"{bold}:\n":
-                text = ""
-                for tag in soup.find_all("p"):
-                    text += tag.text
-
-                text += "\n"
-
-                for tag in soup.find_all("li"):
-                    ind = str(soup.find_all("li").index(tag) + 1)
-
-                    ind = ind.replace("0", "0️⃣") \
-                             .replace("1", "1️⃣") \
-                             .replace("2", "2️⃣") \
-                             .replace("3", "3️⃣") \
-                             .replace("4", "4️⃣") \
-                             .replace("5", "5️⃣") \
-                             .replace("6", "6️⃣") \
-                             .replace("7", "7️⃣") \
-                             .replace("8", "8️⃣") \
-                             .replace("9", "9️⃣")
-
-                    text += ind + " " + tag.text + "\n"
-
-        if text == "":
-            return "Беды с башкой 168"
+                text = self._prepare_list(soup)
 
         text = text.replace("<", "&lt;") \
                    .replace(">", "&gt;") \
@@ -196,7 +179,7 @@ class Wikipya:
                    .replace(" )", ")") \
                    .replace(" )", ")")
 
-        for bold in bold_text:
+        for bold in bold_words:
             try:
                 text = re.sub(bold, f"<b>{bold}</b>", text, 1)
             except re.error:

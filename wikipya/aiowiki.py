@@ -1,8 +1,13 @@
 import aiohttp
 import json
-import re
+import traceback
 
 from bs4 import BeautifulSoup
+
+
+class JSONObject:
+    def __init__(self, dict):
+        vars(self).update(dict)
 
 
 class Wikipya:
@@ -25,7 +30,8 @@ class Wikipya:
                 if not response.status == 200:
                     return 404
 
-                return json.loads(await response.text())
+                return json.loads(await response.text(),
+                                  object_hook=JSONObject)
 
     def _pretty_list(self, list_):
         return list_.replace("0", "0️⃣") \
@@ -60,16 +66,15 @@ class Wikipya:
                                 "srprop": "size"
                                 })
 
-        if len(data["query"]["search"]) == 0:
+        if len(data.query.search) == 0:
             return -1
 
-        responce = data["query"]["search"]
+        responce = data.query.search
 
         result = []
 
         for item in responce:
-            # page = {"title": item["title"], "pageid": item["pageid"]}
-            page = [item["title"], item["pageid"]]
+            page = [item.title, item.pageid]
             result.append(page)
 
         return result
@@ -104,15 +109,15 @@ class Wikipya:
                 "exsentences": exsentences
             })
 
-        result = data["query"]["pages"]
+        result = data.query.pages
 
-        if "-1" in result:
+        if "-1" in result.__dict__:
             return -1
 
-        page_html = result[self._getLastItem(result)]["extract"]
-        soup = BeautifulSoup(page_html, "lxml")
+        page_id = self._getLastItem(result.__dict__)
+        page_html = result.__dict__[page_id].extract
 
-        return soup
+        return BeautifulSoup(page_html, "lxml")
 
     async def getImageByPageName(self, title, pithumbsize=1000):
         data = await self._get({
@@ -122,13 +127,13 @@ class Wikipya:
             "pilicense": "any",
         })
 
-        image_info = data["query"]["pages"]
-        pageid = self._getLastItem(image_info)
+        image_info = data.query.pages
+        pageid = self._getLastItem(image_info.__dict__)
 
         try:
-            return image_info[pageid]["thumbnail"]
+            return image_info.__dict__[pageid].thumbnail
 
-        except KeyError:
+        except AttributeError:
             return -1
 
     async def getImagesByPageName(self, title):
@@ -139,47 +144,43 @@ class Wikipya:
         })
 
     def parsePage(self, soup, title=""):
-        for tag in soup.find_all("p"):
-            if re.match(r"\s", tag.text):
-                tag.replace_with("")
+        try:
+            for t in soup.findAll("p"):
+                if "Это статья об" in t.text:
+                    t.replace_with("")
 
-        for item in ["math", "semantics"]:
-            for t in soup.findAll(item):
-                t.replace_with("")
+            tagBlocklist = [["math"], ["semantics"]]
 
-        if len(soup.find_all("p")) == 0:
-            return soup.text
-        else:
-            p = soup.find_all("p")[0]
+            for item in tagBlocklist:
+                for tag in soup.findAll(*item):
+                    try:
+                        tag.replace_with("")
+                    except Exception:
+                        pass
 
-        bold_words = []
+            for tag in soup.findAll("p"):
+                if tag.text.replace("\n", "") == "":
+                    tag.replace_with("")
+        except Exception:
+            print(traceback.format_exc())
 
-        for tag in p.find_all("b"):
-            bold_words.append(tag.text)
+        try:
+            soup = soup.p
+            for tag in soup():
+                for attribute in ["class", "title", "href", "style", "name",
+                                  "id", "dir", "lang", "rel"]:
+                    try:
+                        del tag[attribute]
+                    except Exception:
+                        pass
 
-        text = ""
+            return str(soup).replace("<p>", "") \
+                            .replace("<a>", "") \
+                            .replace("<span>", "") \
+                            .replace("</p>", "") \
+                            .replace("</a>", "") \
+                            .replace("</span>", "")
 
-        if p.text.find("означать:") != -1 or \
-           p.text.find("— многозначный термин, означающий:") != -1:
-            text = self._prepare_list(soup)
-
-        else:
-            text = re.sub(r"\[.{,}\] ", "", p.text)
-
-        for bold in bold_words:
-            if text == f"{bold}:\n":
-                text = self._prepare_list(soup)
-
-        text = text.replace("<", "&lt;") \
-                   .replace(">", "&gt;") \
-                   .replace("  ", " ") \
-                   .replace(" )", ")") \
-                   .replace(" )", ")")
-
-        for bold in bold_words:
-            try:
-                text = re.sub(bold, f"<b>{bold}</b>", text, 1)
-            except re.error:
-                text = text.replace(bold + " ", f"<b>{bold}</b> ")
-
-        return text
+        except Exception as e:
+            print(e)
+            return "Не удалось распарсить"

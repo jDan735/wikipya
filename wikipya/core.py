@@ -5,6 +5,11 @@ import re
 from bs4 import BeautifulSoup
 
 
+class JSONObject:
+    def __init__(self, dict):
+        vars(self).update(dict)
+
+
 class Wikipya:
     def __init__(self, lang):
         self.lang = lang
@@ -26,7 +31,7 @@ class Wikipya:
         if not r.status_code == 200:
             return 404
 
-        return json.loads(r.text)
+        return json.loads(r.text, object_hook=JSONObject)
 
     def _pretty_list(self, list_):
         return list_.replace("0", "0️⃣") \
@@ -62,21 +67,21 @@ class Wikipya:
             "srprop": "size"
         })
 
-        if len(data["query"]["search"]) == 0:
+        if len(data.query.search) == 0:
             return -1
 
-        responce = data["query"]["search"]
+        responce = data.query.search
 
         result = []
 
         for item in responce:
             # page = {"title": item["title"], "pageid": item["pageid"]}
-            page = [item["title"], item["pageid"]]
+            page = [item.title, item.pageid]
             result.append(page)
 
         return result
 
-    async def opensearch(self, query, limit=1):
+    def opensearch(self, query, limit=1):
         data = self._get({
                    "action": "opensearch",
                    "search": query,
@@ -89,7 +94,7 @@ class Wikipya:
         data = self._get({"pageids": id_})
 
         try:
-            return data["query"]["pages"][str(id_)]["title"]
+            return data.query.pages.__dict__[str(id_)].title
         except KeyError:
             return -1
 
@@ -106,15 +111,16 @@ class Wikipya:
                 "exsentences": exsentences
             })
 
-        result = data["query"]["pages"]
+        result = data.query.pages
 
-        if "-1" in result:
+        if "-1" in result.__dict__:
             return -1
 
-        soup = BeautifulSoup(result[self._getLastItem(result)]["extract"],
-                             "lxml")
+        page_id = self._getLastItem(result.__dict__)
 
-        return soup
+        print(result.__dict__[page_id].extract)
+
+        return BeautifulSoup(result.__dict__[page_id].extract, "lxml")
 
     def getImageByPageName(self, title, pithumbsize=1000):
         data = self._get({
@@ -124,13 +130,13 @@ class Wikipya:
             "pilicense": "any",
         })
 
-        image_info = data["query"]["pages"]
-        pageid = self._getLastItem(image_info)
+        image_info = data.query.pages
+        pageid = self._getLastItem(image_info.__dict__)
 
         try:
-            return image_info[pageid]["thumbnail"]
+            return image_info.__dict__[pageid].thumbnail
 
-        except KeyError:
+        except AttributeError:
             return -1
 
     def getImagesByPageName(self, title):

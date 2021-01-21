@@ -103,7 +103,7 @@ class WikipyaPage:
 
     async def image(self, pithumbsize=1000):
         data = await Wikipya._get({
-            "titles": self.title,
+            "titles": self.query.title,
             "prop": "pageimages",
             "pithumbsize": pithumbsize,
             "pilicense": "any",

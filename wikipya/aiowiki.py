@@ -102,7 +102,7 @@ class WikipyaPage:
             return "Не удалось распарсить"
 
     async def image(self, pithumbsize=1000):
-        data = await Wikipya._get({
+        data = await Wikipya._get(self, {
             "titles": self.query.title,
             "prop": "pageimages",
             "pithumbsize": pithumbsize,

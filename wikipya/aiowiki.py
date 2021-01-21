@@ -16,7 +16,7 @@ class JSONObject:
 
 
 class WikipyaPage:
-    def __init__(self, html, query=None, title=None, pageid=None):
+    def __init__(self, html, query=None, title=None, pageid=None, lang="en"):
         if query is None:
             if title is not None and pageid is not None:
                 self.query = JSONObject({
@@ -28,6 +28,11 @@ class WikipyaPage:
         else:
             self.query = query
 
+        self.pageid = self.query.pageid
+        self.title = self.query.title
+
+        self.lang = lang
+        self.url = f"https://{lang}.wikipedia.org/w/api.php"
         self.html = html
         self.soup = BeautifulSoup(html, "lxml")
 
@@ -112,7 +117,7 @@ class WikipyaPage:
         image = data.query.pages
 
         try:
-            return image.__dict__[self.pageid].thumbnail
+            return image.__dict__[str(self.pageid)].thumbnail
 
         except AttributeError:
             raise NameError("Not found image")
@@ -203,4 +208,4 @@ class Wikipya:
         id_ = self._getLastItem(result.__dict__)
         html = result.__dict__[id_].extract
 
-        return WikipyaPage(html, query)
+        return WikipyaPage(html, query, lang=self.lang)

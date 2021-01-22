@@ -188,7 +188,7 @@ class Wikipya:
         except KeyError:
             return -1
 
-    async def page(self, query, exsentences=5):
+    async def _page(self, query, exsentences=5):
         if exsentences == -1:
             exsentences_json = {}
         else:
@@ -207,5 +207,23 @@ class Wikipya:
 
         id_ = self._getLastItem(result.__dict__)
         html = result.__dict__[id_].extract
+
+        return WikipyaPage(html, query, lang=self.lang)
+
+    async def page(self, query):
+        """ Get pages html code
+
+        Example url:
+            api.php?action=parse&page=Pet&prop=text&formatversion=2
+        """
+
+        data = await self._get({
+            "action": "parse",
+            "page": query.title,
+            "prop": "text",
+            "formatversion": 2
+        })
+
+        html = data.parse.text
 
         return WikipyaPage(html, query, lang=self.lang)

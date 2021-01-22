@@ -1,6 +1,6 @@
+import traceback
 import aiohttp
 import json
-import traceback
 
 from bs4 import BeautifulSoup
 
@@ -11,6 +11,7 @@ class NotFound(Exception):
 
 
 class JSONObject:
+    """JSON => Class"""
     def __init__(self, dict):
         vars(self).update(dict)
 
@@ -107,6 +108,12 @@ class WikipyaPage:
             return "Не удалось распарсить"
 
     async def image(self, pithumbsize=1000):
+        """ Get page image
+
+        Example url:
+            api.php?action=query&titles=Ukraine&prop=pageimages&pithumbsize=1000&pilicense=any&format=json
+        """
+
         data = await Wikipya._get(self, {
             "titles": self.query.title,
             "prop": "pageimages",
@@ -114,13 +121,18 @@ class WikipyaPage:
             "pilicense": "any",
         })
 
-        image = data.query.pages
-
         try:
-            return image.__dict__[str(self.pageid)].thumbnail
+            image = data.query.pages[-1]
+            thumb = image.thumbnail
+
+            return JSONObject({
+                "source": thumb.source,
+                "width": thumb.width,
+                "height": thumb.height
+            })
 
         except AttributeError:
-            raise NameError("Not found image")
+            raise NotFound("Not found image")
 
 
 class Wikipya:
@@ -135,7 +147,8 @@ class Wikipya:
         return item
 
     async def _get(self, params):
-        self.params = {"format": "json", "action": "query"}
+        self.params = {"format": "json", "action": "query",
+                       "formatversion": 2}
         self.params = {**self.params, **params}
 
         async with aiohttp.ClientSession() as session:
@@ -184,9 +197,9 @@ class Wikipya:
         data = await self._get({"pageids": id_})
 
         try:
-            return data["query"]["pages"][str(id_)]["title"]
-        except KeyError:
-            return -1
+            return data.query.pages[-1].title
+        except AttributeError:
+            raise NotFound(f"Not found page with this id: {id_}")
 
     async def _page(self, query, exsentences=5):
         if exsentences == -1:
@@ -197,6 +210,7 @@ class Wikipya:
         data = await self._get({
             "prop": "extracts",
             "titles": query.title,
+            "formatversion": 1,
             **exsentences_json
         })
 
@@ -220,8 +234,7 @@ class Wikipya:
         data = await self._get({
             "action": "parse",
             "page": query.title,
-            "prop": "text",
-            "formatversion": 2
+            "prop": "text"
         })
 
         html = data.parse.text

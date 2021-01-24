@@ -35,9 +35,16 @@ class WikipyaPage:
         self.lang = lang
         self.url = f"https://{lang}.wikipedia.org/w/api.php"
         self.html = html
-        self.soup = BeautifulSoup(html, "lxml")
 
-    def parse(self):
+    @property
+    def soup(self):
+        return BeautifulSoup(self.html, "lxml")
+
+    @property
+    def parsed(self):
+        return self.parse(self.soup)
+
+    def parse(self, soup):
         """This function went html parsed to tghtml"""
 
         try:

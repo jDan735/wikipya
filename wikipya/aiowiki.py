@@ -37,32 +37,6 @@ class WikipyaPage:
         self.html = html
         self.soup = BeautifulSoup(html, "lxml")
 
-    def _pretty_list(self, list_):
-        return list_.replace("0", "0️⃣") \
-                    .replace("1", "1️⃣") \
-                    .replace("2", "2️⃣") \
-                    .replace("3", "3️⃣") \
-                    .replace("4", "4️⃣") \
-                    .replace("5", "5️⃣") \
-                    .replace("6", "6️⃣") \
-                    .replace("7", "7️⃣") \
-                    .replace("8", "8️⃣") \
-                    .replace("9", "9️⃣")
-
-    def _prepare_list(self, text=""):
-        for tag in self.soup.find_all("p"):
-            text += tag.text
-
-        text += "\n"
-
-        for tag in self.soup.find_all("li"):
-            ind = str(self.soup.find_all("li").index(tag) + 1)
-            ind = self._pretty_list(ind)
-
-            text += ind + " " + tag.text + "\n"
-
-        return text
-
     def parse(self):
         """This function went html parsed to tghtml"""
 

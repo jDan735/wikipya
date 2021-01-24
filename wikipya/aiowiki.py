@@ -114,12 +114,9 @@ class WikipyaPage:
             api.php?action=query&titles=Ukraine&prop=pageimages&pithumbsize=1000&pilicense=any&format=json
         """
 
-        data = await Wikipya._get(self, {
-            "titles": self.query.title,
-            "prop": "pageimages",
-            "pithumbsize": pithumbsize,
-            "pilicense": "any",
-        })
+        data = await Wikipya._get(self, titles=self.query.title,
+                                  prop="pageimages", pilicense="any",
+                                  pithumbsize=pithumbsize)
 
         try:
             image = data.query.pages[-1]
@@ -146,10 +143,10 @@ class Wikipya:
 
         return item
 
-    async def _get(self, params):
+    async def _get(self, **kwargs):
         self.params = {"format": "json", "action": "query",
                        "formatversion": 2}
-        self.params = {**self.params, **params}
+        self.params = {**self.params, **kwargs}
 
         async with aiohttp.ClientSession() as session:
             async with session.get(self.url, params=self.params) as response:
@@ -161,10 +158,8 @@ class Wikipya:
                 return json.loads(text, object_hook=JSONObject)
 
     async def search(self, query, limit=1):
-        data = await self._get({"list": "search",
-                                "srsearch": query,
-                                "srlimit": limit,
-                                "srprop": "size"})
+        data = await self._get(list="search", srsearch=query,
+                               srlimit=limit, srprop="size")
 
         if len(data.query.search) == 0:
             raise NotFound("Search can't find anything on your request")
@@ -182,11 +177,7 @@ class Wikipya:
         return result
 
     async def opensearch(self, query, limit=1):
-        data = await self._get({
-                   "action": "opensearch",
-                   "search": query,
-                   "limit": 1
-               })
+        data = await self._get(action="opensearch", search=query, limit=limit)
 
         if len(data) == 0:
             raise NotFound("OpenSearch can't find anything on your request")
@@ -194,7 +185,7 @@ class Wikipya:
         return data
 
     async def getPageName(self, id_):
-        data = await self._get({"pageids": id_})
+        data = await self._get(pageids=id_)
 
         try:
             return data.query.pages[-1].title
@@ -207,12 +198,8 @@ class Wikipya:
         else:
             exsentences_json = {"exsentences": exsentences}
 
-        data = await self._get({
-            "prop": "extracts",
-            "titles": query.title,
-            "formatversion": 1,
-            **exsentences_json
-        })
+        data = await self._get(prop="extracts", titles=query.title,
+                               formatversion=1, **exsentences_json)
 
         result = data.query.pages
 
@@ -224,18 +211,15 @@ class Wikipya:
 
         return WikipyaPage(html, query, lang=self.lang)
 
-    async def page(self, query):
+    async def page(self, query, section=0):
         """ Get pages html code
 
         Example url:
             api.php?action=parse&page=Pet&prop=text&formatversion=2
         """
 
-        data = await self._get({
-            "action": "parse",
-            "page": query.title,
-            "prop": "text"
-        })
+        data = await self._get(action="parse", pageid=query.pageid,
+                               section=section)
 
         html = data.parse.text
 

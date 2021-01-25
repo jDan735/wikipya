@@ -1,5 +1,5 @@
 # 📚 wikipya
-A simple python library for search pages and/or images in Wikipedia. Support async and sync mode.
+A simple async python library for search pages and/or images in Wikipedia.
 
 ## 🚀 Install
 To install, run this code:
@@ -9,11 +9,7 @@ pip install wikipya
 
 ## 🛠 Usage
 ```python
-# For sync import this
-from wikipya.wiki import Wikipya
-
-# For async this
-# Is better solution but sync realisation is wrapper for async
+# Import wikipya
 from wikipya.aiowiki import Wikipya
 
 # Create Wikipya object with wikipedia methods

@@ -6,75 +6,46 @@ To install, run this code:
 ```
 pip install wikipya
 ```
-### 📦 Install module from source code
-```
-python setup.py install
-```
 
-## 🔩 Usage
-Sync mode:
+## 🛠 Usage
 ```python
-from wikipya.core import Wikipya
-```
+# For sync import this
+from wikipya.wiki import Wikipya
 
-Async mode:
-```python
+# For async this
+# Is better solution but sync realisation is wrapper for async
 from wikipya.aiowiki import Wikipya
-```
 
+# Create Wikipya object with wikipedia methods
+wiki = Wikipya("en")
 
-```python
-w = Wikipya("ru")
-print(w.getPage("Камень"))
-```
+# Get a pages list from search
+search = wiki.search("test")
 
-## 🛠 Methods
-### 🔍 search
-```python
-w.search("бан", limit=3)
-```
-```python
-[
-    ['Бан', 301867],
-    ['Библиотека Российской академии наук', 717597],
-    ['Бан (Интернет)', 61853]
-]
-```
+# Get a pages list from opensearch
+opensearch = wiki.opensearch("test")
 
-### 🖼 getImageByPageName
-```python
-w.getImageByPageName("Камень")
-```
-```python
-{
-    'source': 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Two-parts_stone_nikogda_takih_ne_videl_vot.JPG/1000px-Two-parts_stone_nikogda_takih_ne_videl_vot.JPG',
-    'width': 1000,
-    'height': 687
-}
-```
+# Get page class
+# You can give to wiki.page() search item, title of page, page id
 
-### 🖼 getImagesByPageName
-```python
-w.getImagesByPageName("Камень")
-```
-```python
-{'batchcomplete': '', 'query': {'pages': {'2409325': {'pageid': 2409325, 'ns': 0, 'title': 'Камень', 'original': {'source': 'https://upload.wikimedia.org/wikipedia/commons/0/0c/Two-parts_stone_nikogda_takih_ne_videl_vot.JPG', 'width': 2173, 'height': 1492}}}}}
-```
+# Search item (supported ONLY wiki.search)
+page = wiki.page(search[0])
 
-### 📜 getPage
-```python
-w.getPage("Бан (Интернет)")
-```
-```html
-<html><body><p><b>Бан</b> (англ. <span lang="en">ban</span>, <span>/bæn/</span> — запрещать, объявлять вне закона) — один из способов контроля над действиями пользователей в Интернете. Как правило, бан заключается в лишении или ограничении каких-либо прав пользователя (на создание/отправление новых сообщений или создание новых тем на веб-форуме, на отправление сообщений в чате, на комментирование в блогах, ограничение доступа к личным страницам и др.). Возможность введена в целях оградить интернет-сайт от троллей, спамеров, вандалов и прочих лиц, чьи сообщения вредят продуктивной работе ресурса.
-</p><p>Бан обычно действует в рамках одного веб-сайта, группы (паблика) или личной страницы. Круг запретных действий, за которые на пользователя налагается бан, устанавливаются владельцами этого сайта.</p></body></html>
-```
+# Page title
+page = wiki.page("git")
 
-### 📒 parsePage
-```python
-page = w.getPage("Бан (Интернет)")
-w.parsePage(page)
-```
-```
-'<b>Бан</b> (англ.\xa0ban, /bæn/\xa0— запрещать, объявлять вне закона)\xa0— один из способов контроля над действиями пользователей в Интернете. Как правило, бан заключается в лишении или ограничении каких-либо прав пользователя (на создание/отправление новых сообщений или создание новых тем на веб-форуме, на отправление сообщений в чате, на комментирование в блогах, ограничение доступа к личным страницам и др.). Возможность введена в целях оградить интернет-сайт от троллей, спамеров, вандалов и прочих лиц, чьи сообщения вредят продуктивной работе ресурса.\n'
+# Pageid
+page = wiki.page(800543)
+
+print(page.html)       # Get page html
+print(page.soup)       # Get parsed html (Beatiful Soup 4)
+print(page.parsed)     # Get html cleared of link, and other non-formating tags 
+print(page.fixed)      # [RU/UK] Свойство, в котором исправлены спорные слова (В/НА, Беларусь)
+
+# Get page image
+image = page.image()
+
+print(image.source)    # Image url
+print(image.width)     # Image width
+print(image.height)    # Image height
 ```

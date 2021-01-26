@@ -27,6 +27,8 @@ setup(
     ],
     python_requires=">=3",
     install_requires=[
-        "beautifulsoup4"
-    ]
+        "beautifulsoup4",
+        "tghtml"
+    ],
+    test_suite="tests"
 )

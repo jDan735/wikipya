@@ -1,8 +1,7 @@
-import traceback
 import aiohttp
 import json
 
-from bs4 import BeautifulSoup
+from tghtml import tghtml
 
 
 class NotFound(Exception):
@@ -13,80 +12,54 @@ class NotFound(Exception):
 class JSONObject:
     """JSON => Class"""
     def __init__(self, dict):
+        self.add(dict)
+
+    def add(self, dict):
+        self._dict = dict
         vars(self).update(dict)
 
 
+class SearchItem:
+    def __init__(self, title, pageid):
+        self.title = title
+        self.pageid = pageid
+
+
 class WikipyaPage:
-    def __init__(self, html, query=None, title=None, pageid=None, lang="en"):
-        if query is None:
-            if title is not None and pageid is not None:
-                self.query = JSONObject({
-                    "title": title,
-                    "pageid": pageid
-                })
-            else:
-                raise NameError("query or pageid & name is not defined")
-        else:
-            self.query = query
+    def __init__(self, parse, lang="en"):
+        vars(self).update(parse._dict)
 
-        self.pageid = self.query.pageid
-        self.title = self.query.title
-
+        self.blockList = []
         self.lang = lang
         self.url = f"https://{lang}.wikipedia.org/w/api.php"
-        self.html = html
-
-    @property
-    def soup(self):
-        return BeautifulSoup(self.html, "lxml")
 
     @property
     def parsed(self):
-        return self.parse(self.soup)
+        return tghtml(self.text, self.blockList)
 
-    def parse(self, soup):
-        """This function went html parsed to tghtml"""
+    @property
+    def fixed(self):
+        namelist = [
+            ["Белоруссия", "Беларусь"],
+            ["Белоруссии", "Беларуси"],
+            ["Беларуссию", "Беларусь"],
+            ["Белоруссией", "Беларусью"],
+            ["Белоруссиею", "Беларусью"],
 
-        try:
-            for t in self.soup.findAll("p"):
-                if "Это статья об" in t.text:
-                    t.replace_with("")
+            ["Белору́ссия", "Белару́сь"],
+            ["Белору́ссии", "Белару́си"],
+            ["Белору́ссию", "Белару́сь"],
+            ["Белору́ссией", "Белару́сью"],
+            ["Белору́ссиею", "Белару́сью"],
 
-            tagBlocklist = [["math"], ["semantics"]]
 
-            for item in tagBlocklist:
-                for tag in self.soup.findAll(*item):
-                    try:
-                        tag.replace_with("")
-                    except Exception:
-                        pass
+            ["на Украин", "в Украин"],
+        ]
 
-            for tag in self.soup.findAll("p"):
-                if tag.text.replace("\n", "") == "":
-                    tag.replace_with("")
-        except Exception:
-            print(traceback.format_exc())
+        for name in namelist:
+            text = self.parsed.replace(*name)
 
-        try:
-            soup = self.soup.p
-            for tag in soup():
-                for attribute in ["class", "title", "href", "style", "name",
-                                  "id", "dir", "lang", "rel"]:
-                    try:
-                        del tag[attribute]
-                    except Exception:
-                        pass
-
-            return str(soup).replace("<p>", "") \
-                            .replace("<a>", "") \
-                            .replace("<span>", "") \
-                            .replace("</p>", "") \
-                            .replace("</a>", "") \
-                            .replace("</span>", "")
-
-        except Exception as e:
-            print(e)
-            return "Не удалось распарсить"
+        return text
 
     async def image(self, pithumbsize=1000):
         """ Get page image
@@ -95,7 +68,7 @@ class WikipyaPage:
             api.php?action=query&titles=Ukraine&prop=pageimages&pithumbsize=1000&pilicense=any&format=json
         """
 
-        data = await Wikipya._get(self, titles=self.query.title,
+        data = await Wikipya._get(self, titles=self.title,
                                   prop="pageimages", pilicense="any",
                                   pithumbsize=pithumbsize)
 
@@ -118,12 +91,6 @@ class Wikipya:
         self.lang = lang
         self.url = f"https://{lang}.wikipedia.org/w/api.php"
 
-    def _getLastItem(self, page, item=""):
-        for tag in page:
-            item = tag
-
-        return item
-
     async def _get(self, **kwargs):
         self.params = {"format": "json", "action": "query",
                        "formatversion": 2}
@@ -138,9 +105,9 @@ class Wikipya:
 
                 return json.loads(text, object_hook=JSONObject)
 
-    async def search(self, query, limit=1):
+    async def search(self, query, limit=1, prop="size"):
         data = await self._get(list="search", srsearch=query,
-                               srlimit=limit, srprop="size")
+                               srlimit=limit, srprop=prop)
 
         if len(data.query.search) == 0:
             raise NotFound("Search can't find anything on your request")
@@ -150,10 +117,7 @@ class Wikipya:
         result = []
 
         for item in responce:
-            result.append(JSONObject({
-                "title": item.title,
-                "pageid": item.pageid
-            }))
+            result.append(SearchItem(title=item.title, pageid=item.pageid))
 
         return result
 
@@ -182,26 +146,32 @@ class Wikipya:
         data = await self._get(prop="extracts", titles=query.title,
                                formatversion=1, **exsentences_json)
 
-        result = data.query.pages
+        result = data.query.pages.__dict__
 
-        if "-1" in result.__dict__:
+        if "-1" in result:
             return -1
 
-        id_ = self._getLastItem(result.__dict__)
-        html = result.__dict__[id_].extract
+        query = result[list(result.keys())[-1]]
+        query.add({"text": query.extract})
 
-        return WikipyaPage(html, query, lang=self.lang)
+        return WikipyaPage(query, lang=self.lang)
 
-    async def page(self, query, section=0):
+    async def page(self, query, prop="text", section=0):
         """ Get pages html code
 
         Example url:
             api.php?action=parse&page=Pet&prop=text&formatversion=2
         """
 
-        data = await self._get(action="parse", pageid=query.pageid,
-                               section=section)
+        if query.__class__ == str:
+            params = {"page": query}
 
-        html = data.parse.text
+        elif query.__class__ == int:
+            params = {"pageid": query}
 
-        return WikipyaPage(html, query, lang=self.lang)
+        elif query.__class__ == SearchItem:
+            params = {"pageid": query.pageid}
+
+        data = await self._get(action="parse", section=section, prop=prop, **params)
+
+        return WikipyaPage(data.parse, lang=self.lang)

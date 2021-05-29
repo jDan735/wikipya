@@ -1,0 +1,7 @@
+[flake8]
+inline-quotes = "
+application-import-names = wikipya, types
+import-style-order = google
+
+strictness=short
+docstring_style=sphinx

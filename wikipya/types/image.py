@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class ImageItem:
+class Image:
     source: str
     width: int
     height: int

@@ -1,4 +1,6 @@
 import aiohttp
+
+import time
 import json
 
 
@@ -22,20 +24,46 @@ class BaseDriver:
 
 
 class AiohttpDriver(BaseDriver):
-    async def get(self, url=None, timeout=None, **params):
-        params = {**self.params, **params}
+    async def get(self, url=None, timeout=None, debug=False, **params):
+        if len(list(params.keys())) == 0:
+            params = None
+        else:
+            params = {**self.params, **params}
 
         async with aiohttp.ClientSession() as session:
+            start = time.time()
+
             async with session.get(
                 url or self.url, params=params,
                 timeout=timeout or self.timeout
             ) as response:
                 text = await response.text()
 
-                try:
-                    return response.status, json.loads(
-                        text, object_hook=JSONObject
-                    )
-                except Exception as e:
-                    print(e)
-                    return response.status, text
+                if debug:
+                    print(response.url)
+                    print(time.time() - start)
+
+                return response.status, json.loads(
+                    text, object_hook=JSONObject
+                )
+
+    async def get_html(self, url=None, timeout=None, debug=False, **params):
+        if len(list(params.keys())) == 0:
+            params = None
+        else:
+            params = {**self.params, **params}
+
+        async with aiohttp.ClientSession() as session:
+            start = time.time()
+
+            async with session.get(
+                url or self.url, params=params,
+                timeout=timeout or self.timeout
+            ) as response:
+                text = await response.text()
+
+                if debug:
+                    print(response.url)
+                    print(time.time() - start)
+
+                return response.status, text, response.url

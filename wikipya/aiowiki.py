@@ -26,7 +26,7 @@ class Wikipya:
             "format": "json",
             "action": "query",
             "formatversion": 2
-        }, img_blocklist=(), host="", prefix="/w/"
+        }, img_blocklist=(), host="", prefix="/w"
     ):
         """ Initialisation instance of Wikipya
         Args:
@@ -176,6 +176,8 @@ class Wikipya:
 
         page = await self.page(title)
         page.blockList = blocklist
+        
+        image = await page.image(prefix=self.prefix)
 
         try:
             image = await page.image(prefix=self.prefix)

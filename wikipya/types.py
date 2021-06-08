@@ -24,6 +24,4 @@ class Image:
 
             new_rev = rev.replace(str(size), "10000")
 
-            print(self.source.replace(rev, new_rev))
-
             self.source = self.source.replace(rev, new_rev)

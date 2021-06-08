@@ -102,7 +102,7 @@ class ImageController(BaseContoller):
                       .replace("/api.php", prefix) \
 
         status, data, url = await self.driver.get_html(
-            f"{url}/File:{name}", debug=True
+            f"{url}/File:{name}"
         )
 
         if status != 200:

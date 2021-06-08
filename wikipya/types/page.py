@@ -11,7 +11,7 @@ class WikipyaPage:
         self.params = params      # fastfix for image
         self.img_blocklist = img_blocklist
         self.url = f"https://{lang}.wikipedia.org/w/api.php"
-        
+
         # fix for lurkmore
         if self.text.__class__.__name__ == "JSONObject":
             self.text = self.text.__dict__["*"]

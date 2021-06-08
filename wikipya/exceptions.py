@@ -6,3 +6,8 @@ class NotFound(Exception):
 class NotSupported(Exception):
     def __init__(self, text):
         pass
+
+
+class ParseError(Exception):
+    def __init__(self, text):
+        pass

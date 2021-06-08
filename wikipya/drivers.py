@@ -3,6 +3,8 @@ import aiohttp
 import time
 import json
 
+from .exceptions import ParseError
+
 
 class JSONObject:
     """JSON => Class"""
@@ -43,9 +45,15 @@ class AiohttpDriver(BaseDriver):
                     print(response.url)
                     print(time.time() - start)
 
-                return response.status, json.loads(
-                    text, object_hook=JSONObject
-                )
+                js = json.loads(text, object_hook=JSONObject)
+
+                if isinstance(js, list):
+                    pass
+
+                elif js.__dict__.get("error") is not None:
+                    raise ParseError(f"{js.error.code}: {js.error.info}")
+
+                return response.status, js
 
     async def get_html(self, url=None, timeout=None, debug=False, **params):
         if len(list(params.keys())) == 0:

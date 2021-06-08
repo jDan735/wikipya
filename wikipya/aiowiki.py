@@ -8,6 +8,18 @@ from .types.image import Image
 from .types.search import SearchItem
 
 
+WGR_FLAG = (
+    "https://upload.wikimedia.org/wikipedia/commons/thumb" +
+    "/8/85/Flag_of_Belarus.svg/1000px-Flag_of_Belarus.svg.png"
+)
+
+WRW_FLAG = (
+    "https://upload.wikimedia.org/wikipedia/commons/thumb" +
+    "/5/50/Flag_of_Belarus_%281918%2C_1991%E2%80%931995%29.svg" +
+    "/1000px-Flag_of_Belarus_%281918%2C_1991%E2%80%931995%29.svg.png"
+)
+
+
 class Wikipya:
     def __init__(
         self, lang=None, driver=AiohttpDriver, version="1.0",
@@ -15,7 +27,7 @@ class Wikipya:
             "format": "json",
             "action": "query",
             "formatversion": 2
-        }, img_blocklist=(), host=""
+        }, img_blocklist=(), host="", prefix="/w"
     ):
         """ Initialisation instance of Wikipya
         Args:
@@ -35,6 +47,7 @@ class Wikipya:
             lang=self.lang
         )
         self.host = host
+        self.prefix = prefix
 
         self.driver = driver(url=self.url,
                              params=params)
@@ -149,33 +162,31 @@ class Wikipya:
 
     async def get_all(self, query, lurk=False,
                       blocklist=(), **kwargs):
-        try:
-            search = await self.search(query)
-
-        except NotFound:
-            await message.reply(_("errors.not_found"))
-            return
-
+        search = await self.search(query)
         opensearch = await self.opensearch(
             query if lurk else search[0].title
         )
 
         if lurk:
-            url = "example.com"
-            page = await self.page(opensearch[0])
-
+            try:
+                url, title = opensearch[-1][0], opensearch[1][0]
+            except:
+                url, title = None, search[0]
         else:
-            url = opensearch[-1][0]
-            page = await self.page(search[0])
+            url, title = opensearch[-1][0], search[0]
 
+        page = await self.page(title)
         page.blockList = blocklist
 
         try:
-            image = await page.image()
+            image = await page.image(prefix=self.prefix)
             image = image.source
 
         except Exception as e:
             print(e)
             image = -1
+
+        if image == WGR_FLAG:
+            image = WRW_FLAG
 
         return page, image, url

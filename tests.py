@@ -3,7 +3,7 @@ import asyncio
 
 from wikipya.aiowiki import Wikipya
 
-wiki = Wikipya("ru")
+wiki = Wikipya("ru", version="1.35")
 
 
 def async_test(coro):
@@ -29,7 +29,7 @@ class TestWikipya(unittest.TestCase):
 
     @async_test
     async def test_image(self):
-        page = await wiki.page("канобу")
+        page = await wiki.page("Украина")
         image = await page.image()
 
         self.assertTrue(image.width > 0)

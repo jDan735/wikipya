@@ -172,12 +172,10 @@ class Wikipya:
             except:
                 url, title = None, search[0]
         else:
-            url, title = opensearch[-1][0], search[0]
+            url, title = opensearch[-1], search[0]
 
         page = await self.page(title)
         page.blockList = blocklist
-        
-        image = await page.image(prefix=self.prefix)
 
         try:
             image = await page.image(prefix=self.prefix)

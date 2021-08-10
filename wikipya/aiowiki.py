@@ -1,4 +1,4 @@
-from .drivers import AiohttpDriver
+from .drivers import HttpxDriver
 from .exceptions import NotFound
 
 from .methods import ImageController
@@ -21,7 +21,7 @@ WRW_FLAG = (
 
 class Wikipya:
     def __init__(
-        self, lang=None, driver=AiohttpDriver, version="1.0",
+        self, lang=None, Driver=HttpxDriver, version="1.0",
         url="https://{lang}.wikipedia.org/w/api.php", params={
             "format": "json",
             "action": "query",
@@ -48,8 +48,7 @@ class Wikipya:
         self.host = host
         self.prefix = prefix
 
-        self.driver = driver(url=self.url,
-                             params=params)
+        self.driver = Driver(url=self.url, params=params)
 
     @property
     def params(self):
@@ -178,7 +177,7 @@ class Wikipya:
         page.blockList = blocklist
 
         try:
-            image = await page.image(prefix=self.prefix)
+            image = await page.image(prefix=self.prefix, debug=True)
             image = image.source
 
         except Exception as e:

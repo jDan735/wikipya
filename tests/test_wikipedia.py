@@ -4,4 +4,4 @@ from wikipya.aiowiki import Wikipya
 
 
 class TestWikipedia(CommonTestsWikipya):
-    wikipya = Wikipya("ru", version="1.35")
+    wikipya = Wikipya("ru", version="1.35", lurk=False)

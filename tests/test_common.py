@@ -16,25 +16,26 @@ class CommonTestsWikipya:
 
     @pytest.mark.asyncio
     async def test_search(self):
-        results = await self.wikipya.search(self.SEARCH_QUERY, limit=self.SEARCH_LIMIT)
+        results = await self.wikipya.search(self.SEARCH_QUERY,
+                                            limit=self.SEARCH_LIMIT)
 
         assert len(results) == self.SEARCH_LIMIT
 
     @pytest.mark.asyncio
     async def test_opensearch(self):
-        results = await self.wikipya.opensearch(self.SEARCH_QUERY, limit=self.SEARCH_LIMIT)
+        results = await self.wikipya.opensearch(self.SEARCH_QUERY,
+                                                limit=self.SEARCH_LIMIT)
 
-        assert len(results) == self.SEARCH_LIMIT
+        assert len(results.variants) == self.SEARCH_LIMIT
 
     @pytest.mark.asyncio
     async def test_image(self):
         page = await self.wikipya.page(self.IMAGE_QUERY)
-        image = await page.image()
+        image = await page.image(prefix=self.wikipya.prefix)
 
         if self.CHECK_IMAGE_RES:
             assert image.width > 0
             assert image.height > 0
-
 
     @pytest.mark.asyncio
     async def test_getPageName(self):
@@ -48,3 +49,7 @@ class CommonTestsWikipya:
 
         for _ in page.text, page.fixed, page.parsed:
             assert _ != ""
+
+
+class CommonTestsWikipyaLegacy(CommonTestsWikipya):
+    test_getPageName = None

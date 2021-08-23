@@ -98,18 +98,18 @@ class HttpxDriver(BaseDriver):
             res = await client.get(url or self.url, params=params,
                                    timeout=timeout or self.timeout)
 
-            if debug:
-                print(res.url)
-                print(time.time() - start)
-
             js = json.loads(res.text, object_hook=JSONObject)
 
-            if isinstance(js, list):
-                pass
-            elif js.__dict__.get("error"):
+            if not isinstance(js, list) and js.__dict__.get("error"):
                 raise ParseError(f"{js.error.code}: {js.error.info}")
+        
+            try:
+                js.url = res.url
+                js.load_time = time.time() - start
+            except:
+                pass
 
-            return res.status_code, js
+            return js
 
     async def get_html(self, url=None, timeout=None, debug=False, **params):
         if len(list(params.keys())) == 0:

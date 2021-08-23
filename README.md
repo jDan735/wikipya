@@ -1,7 +1,7 @@
 <div align="center">
   <h1>📚 wikipya</h1>
   <h3>A simple async python library for search pages and images in wikis</h3>
-</div>
+</div><br>
 
 ## 🛠 Usage
 ```python

@@ -49,7 +49,7 @@ class MediaWiki(BaseClient):
         ))
 
         if len(res.variants) == 0:
-            raise NotFound("Search can't find anything on your request")
+            raise NotFound("OpenSearch can't find anything on your request")
 
         return res
 

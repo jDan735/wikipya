@@ -61,7 +61,7 @@ class AiohttpDriver(BaseDriver):
                 elif js.__dict__.get("error") is not None:
                     raise ParseError(f"{js.error.code}: {js.error.info}")
 
-                return response.status, js
+                return js
 
     async def get_html(self, url=None, timeout=None, debug=False, **params):
         if len(list(params.keys())) == 0:
@@ -87,44 +87,17 @@ class AiohttpDriver(BaseDriver):
 
 class HttpxDriver(BaseDriver):
     async def get(self, url=None, timeout=None, debug=False, **params):
-        if len(list(params.keys())) == 0:
-            params = None
-        else:
-            params = {**self.params, **params}
-
-        async with httpx.AsyncClient() as client:
-            start = time.time()
-
-            res = await client.get(url or self.url, params=params,
-                                   timeout=timeout or self.timeout)
-
+        async with httpx.AsyncClient(timeout=timeout) as client:
+            res = await client.get(url or self.url,
+                                   params={**self.params, **params})
             js = json.loads(res.text, object_hook=JSONObject)
 
-            if not isinstance(js, list) and js.__dict__.get("error"):
-                raise ParseError(f"{js.error.code}: {js.error.info}")
-        
-            try:
-                js.url = res.url
-                js.load_time = time.time() - start
-            except:
-                pass
+        if not isinstance(js, list) and res.json().get("error"):
+            raise ParseError(f"{js.error.code}: {js.error.info}")
 
-            return js
+        return js
 
     async def get_html(self, url=None, timeout=None, debug=False, **params):
-        if len(list(params.keys())) == 0:
-            params = None
-        else:
-            params = {**self.params, **params}
-
-        async with httpx.AsyncClient() as client:
-            start = time.time()
-
-            res = await client.get(url or self.url, params=params,
-                                   timeout=timeout or self.timeout)
-
-            if debug:
-                print(res.url)
-                print(time.time() - start)
-
+        async with httpx.AsyncClient(timeout=timeout) as client:
+            res = await client.get(url or self.url, params=params)
             return res.status_code, res.text, res.url

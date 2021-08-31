@@ -1,7 +1,7 @@
 from test_common import CommonTestsWikipyaLegacy
 
 from wikipya.aiowiki import Wikipya
-from wikipya.clients.mediawiki_legacy import MediaWiki_Legacy
+from wikipya.clients import MediaWiki_Legacy
 
 
 class TestFallout(CommonTestsWikipyaLegacy):

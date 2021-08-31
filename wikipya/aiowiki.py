@@ -1,9 +1,4 @@
-from .clients.mediawiki import MediaWiki
-from .clients.mediawiki_legacy import MediaWiki_Legacy
-from .clients.mediawiki_lurk import MediaWiki_Lurk
-
-
-from .clients.base import BaseClient
+from .clients import *
 from .drivers import HttpxDriver
 
 from .exceptions import NotFound

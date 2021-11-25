@@ -6,9 +6,7 @@ from bs4 import BeautifulSoup
 
 
 class MediaWiki_Legacy(MediaWiki):
-    async def image(self, titles, pithumbsize=1000,
-                    piprop="thumbnail", img_blocklist=(),
-                    prefix=None, **kwargs):
+    async def image(self, titles, pithumbsize=1000, img_blocklist=()) -> Image:
         r = await self.driver.get(
             action="parse",
             page=titles,
@@ -16,11 +14,6 @@ class MediaWiki_Legacy(MediaWiki):
             redirects="true",
             section=0
         )
-
-        if prefix == "":
-            pass
-        else:
-            prefix = prefix or self.prefix
 
         _images = Images.parse_obj(r.json["parse"]).images
         images = []
@@ -33,12 +26,12 @@ class MediaWiki_Legacy(MediaWiki):
                 continue
 
             try:
-                images.append(await self.get_image(image, prefix=prefix))
+                images.append(await self.get_image(image))
                 return images[0]
             except Exception as e:
                 print(e)
 
-    async def get_image(self, name, prefix="/w"):
+    async def get_image(self, name) -> Image:
         url = self.driver.url.lower() \
                              .replace('/wiki/api.php', self.prefix) \
                              .replace("/w/api.php", self.prefix) \

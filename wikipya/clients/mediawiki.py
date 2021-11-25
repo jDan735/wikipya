@@ -1,5 +1,5 @@
 from .base import BaseClient
-from ..models import Page, Search, Image, OpenSearch
+from ..models import Page, Search, SearchResult, Image, OpenSearch
 from ..exceptions import NotFound
 
 
@@ -17,7 +17,7 @@ class MediaWiki(BaseClient):
 
     LANG = None
 
-    async def search(self, query, limit=1, prop="size"):
+    async def search(self, query, limit=1, prop="size") -> list[SearchResult]:
         res = await self.driver.get(
             list="search",
             srsearch=query,
@@ -32,7 +32,7 @@ class MediaWiki(BaseClient):
         else:
             return results
 
-    async def opensearch(self, query, limit=1):
+    async def opensearch(self, query, limit=1) -> OpenSearch:
         r = await self.driver.get(
             action="opensearch",
             search=query,
@@ -74,13 +74,13 @@ class MediaWiki(BaseClient):
 
         return page
 
-    async def image(self, titles, pithumbsize=1000, piprop="thumbnail", **kwargs):
+    async def image(self, titles, pithumbsize=1000, img_blocklist=()) -> Image:
         res = await self.driver.get(
             titles=titles,
             prop="pageimages",
             pilicense="any",
             pithumbsize=pithumbsize,
-            piprop=piprop,
+            piprop="thumbnail",
         )
 
         try:
@@ -91,7 +91,7 @@ class MediaWiki(BaseClient):
         except AttributeError:
             raise NotFound("Not found image")
 
-    async def get_page_name(self, id):
+    async def get_page_name(self, id) -> str:
         res = await self.driver.get(pageids=id)
 
         try:

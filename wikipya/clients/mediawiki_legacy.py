@@ -32,16 +32,8 @@ class MediaWiki_Legacy(MediaWiki):
                 print(e)
 
     async def get_image(self, name) -> Image:
-        url = self.driver.url.lower() \
-                             .replace('/wiki/api.php', self.prefix) \
-                             .replace("/w/api.php", self.prefix) \
-                             .replace("/api.php", self.prefix)
-
-        status, data, url = await self.driver.get_html(
-            f"{url}/File:{name}"
-        )
-
-        soup = BeautifulSoup(data, 'lxml')
+        r = await self.driver.get_html(f"{self.url.image_url}/File:{name}")
+        soup = BeautifulSoup(r.text, 'lxml')
 
         file = soup.find("div", id="file")
         thumbnails = soup.find_all("img", {"class": "pi-image-thumbnail"})

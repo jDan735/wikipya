@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 from .clients import BaseClient, MediaWiki, MediaWiki_Lurk
 from .drivers import HttpxDriver
+from .models import URL
 from .exceptions import NotFound
 
 
@@ -15,7 +16,7 @@ class Wikipya:
     img_blocklist: list = ()
 
     def __post_init__(self):
-        self.url = self.base_url.format(lang=self.lang)
+        self.url = URL(self.base_url, self.lang, self.prefix)
 
         self.client = MediaWiki_Lurk if self.is_lurk else self.client
         self.client = self.client(url=self.url, prefix=self.prefix, driver=HttpxDriver,

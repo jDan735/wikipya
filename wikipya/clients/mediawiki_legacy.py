@@ -1,23 +1,15 @@
 from .mediawiki import MediaWiki
-from ..types import SearchItem, WikipyaPage, Image
+from ..models import Images, Image
 from ..exceptions import NotFound
 
 from bs4 import BeautifulSoup
 
 
 class MediaWiki_Legacy(MediaWiki):
-    DEFAULT_PARAMS = {
-        "format": "json",
-        "action": "query",
-        "formatversion": 2
-    }
-
-    LANG = None
-
     async def image(self, titles, pithumbsize=1000,
                     piprop="thumbnail", img_blocklist=(),
-                    prefix="/w", **kwargs):
-        data = await self.driver.get(
+                    prefix=None, **kwargs):
+        r = await self.driver.get(
             action="parse",
             page=titles,
             prop="images",
@@ -25,14 +17,18 @@ class MediaWiki_Legacy(MediaWiki):
             section=0
         )
 
-        all_images = data.parse.images
+        if prefix == "":
+            pass
+        else:
+            prefix = prefix or self.prefix
 
-        if len(all_images) == 0:
-            raise NotFound("Not found images")
-        
+        _images = Images.parse_obj(r.json["parse"]).images
         images = []
 
-        for image in all_images:
+        if len(_images) == 0:
+            raise NotFound("Not found images")
+
+        for image in _images:
             if image in img_blocklist:
                 continue
 
@@ -44,9 +40,9 @@ class MediaWiki_Legacy(MediaWiki):
 
     async def get_image(self, name, prefix="/w"):
         url = self.driver.url.lower() \
-                             .replace('/wiki/api.php', prefix) \
-                             .replace("/w/api.php", prefix) \
-                             .replace("/api.php", prefix)
+                             .replace('/wiki/api.php', self.prefix) \
+                             .replace("/w/api.php", self.prefix) \
+                             .replace("/api.php", self.prefix)
 
         status, data, url = await self.driver.get_html(
             f"{url}/File:{name}"

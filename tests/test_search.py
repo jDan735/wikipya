@@ -15,4 +15,4 @@ async def test_opensearch(params: Params):
     results = await params.client.opensearch(
         params.search_query, params.search_limit)
 
-    assert len(results.variants) == params.search_limit
+    assert len(results.results) == params.search_limit

@@ -1,6 +1,6 @@
 import pytest
 from wikipya import Wikipya
-from wikipya.clients.mediawiki_legacy import MediaWiki_Legacy
+from wikipya.clients import MediaWiki_Legacy
 from pytest_lazyfixture import lazy_fixture
 
 from params import Params
@@ -22,10 +22,11 @@ def lurkmore():
 
     return Params(
         client=Wikipya(
-            url="https://ipv6.lurkmo.re/api.php",
+            base_url="https://ipv6.lurkmo.re/api.php",
             prefix="",
             # img_blocklist=blocklist["images"]
-        ),
+            is_lurk=True
+        ).get_instance(),
 
         search_limit=1,
         search_query="эта страна",
@@ -38,7 +39,7 @@ def wikipedia():
     """Went wikipedia instance"""
 
     return Params(
-        client=Wikipya("ru", version="1.35", lurk=False),
+        client=Wikipya("ru").get_instance(),
     )
 
 
@@ -48,10 +49,10 @@ def fallout():
 
     return Params(
         client=Wikipya(
-            url="https://fallout.fandom.com/ru/api.php",
+            base_url="https://fallout.fandom.com/ru/api.php",
             prefix="",
             client=MediaWiki_Legacy
-        ),
+        ).get_instance(),
         search_query="Марипоза",
         search_limit=1,
         image_query="Стрип"
@@ -64,10 +65,10 @@ def kaiserreich():
 
     return Params(
         client=Wikipya(
-            url="https://kaiserreich.fandom.com/ru/api.php",
+            base_url="https://kaiserreich.fandom.com/ru/api.php",
             prefix="",
             client=MediaWiki_Legacy
-        ),
+        ).get_instance(),
         search_query="Германская империя",
         search_limit=1
     )

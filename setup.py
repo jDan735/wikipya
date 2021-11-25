@@ -29,7 +29,8 @@ setup(
     install_requires=[
         "beautifulsoup4",
         "tghtml",
-        "httpx"
+        "httpx",
+        "pydantic"
     ],
     test_suite="tests"
 )

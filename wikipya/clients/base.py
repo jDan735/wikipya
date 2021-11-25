@@ -1,12 +1,24 @@
-from ..drivers import HttpxDriver
+from dataclasses import dataclass, field
+
+from ..drivers import BaseDriver, HttpxDriver
 
 
+@dataclass
 class BaseClient:
-    def __init__(self, driver=HttpxDriver, url=None, lang="ru"):
-        self.driver = driver(
-            (url or self.BASE_URL).format(lang=lang),
-            params=self.DEFAULT_PARAMS
-        )
+    url: str
+    prefix: str
+    driver: BaseDriver = field(repr=False, default_factory=HttpxDriver)
+
+    img_blocklist: list = field(default_factory=list, repr=False)
+
+    DEFAULT_PARAMS = {
+        "format": "json",
+        "action": "query",
+        "formatversion": 2
+    }
+
+    def __post_init__(self):
+        self.driver = self.driver(self.url, params=self.DEFAULT_PARAMS)
 
     async def search(self, *args, **kwargs):
         raise NotImplementedError
@@ -26,5 +38,5 @@ class BaseClient:
     async def get_all(self, *args, **kwargs):
         raise NotImplementedError
 
-    async def getPageName(self, *args, **kwargs):
+    async def get_page_name(self, *args, **kwargs):
         raise NotImplementedError

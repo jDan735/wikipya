@@ -6,7 +6,7 @@ from typing import Any
 class OpenSearch:
     query: str
     _variants: list = field(default_factory=list, repr=False)
-    unknown: list = field(default_factory=list, repr=False)
+    descriptions: list = field(default_factory=list, repr=False)
     links: list = field(default_factory=list, repr=False)
     results: Any = field(default_factory=list)
 

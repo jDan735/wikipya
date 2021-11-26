@@ -20,3 +20,7 @@ class URL:
     @property
     def image_url(self):
         return re.sub(r"(wiki|w)?/api.php", self.prefix, self.url)
+
+    @property
+    def cleaned(self):
+        return re.sub(r"(wiki|w)?/api.php", "", self.url)

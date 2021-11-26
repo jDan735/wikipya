@@ -34,4 +34,4 @@ class HttpxDriver(BaseDriver):
         return res
 
     async def get_html(self, url=None, timeout=None, debug=False, **params):
-        return await self._client.get(str(url or self.url), params=params)
+        return await self._client.get(str(url or self.url), params=params, follow_redirects=True)

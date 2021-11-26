@@ -1,5 +1,5 @@
 from .base import BaseClient
-from ..models import Page, Search, SearchResult, Image, OpenSearch
+from ..models import Page, Search, SearchResult, Image, OpenSearch, Summary
 from ..exceptions import NotFound
 
 
@@ -17,7 +17,7 @@ class MediaWiki(BaseClient):
 
     LANG = None
 
-    async def search(self, query, limit=1, prop="size") -> list[SearchResult]:
+    async def search(self, query, limit=1, prop="snippet") -> list[SearchResult]:
         res = await self.driver.get(
             list="search",
             srsearch=query,
@@ -73,6 +73,12 @@ class MediaWiki(BaseClient):
         page.tag_blocklist = blocklist
 
         return page
+
+    async def summary(self, title) -> Summary:
+        res = await self.driver.get_html(
+            f"{self.driver.url.cleaned}api/rest_v1/page/summary/{title}")
+
+        return Summary.parse_raw(res.text)
 
     async def image(self, titles, pithumbsize=1000, img_blocklist=()) -> Image:
         res = await self.driver.get(

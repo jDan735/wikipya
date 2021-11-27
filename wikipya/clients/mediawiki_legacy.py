@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 
 
 class MediaWiki_Legacy(MediaWiki):
-    async def image(self, titles, pithumbsize=1000, img_blocklist=()) -> Image:
+    async def image(self, titles, pithumbsize=1000) -> Image:
         r = await self.driver.get(
             action="parse",
             page=titles,
@@ -22,7 +22,7 @@ class MediaWiki_Legacy(MediaWiki):
             raise NotFound("Not found images")
 
         for image in _images:
-            if image in img_blocklist:
+            if image in self.img_blocklist:
                 continue
 
             try:

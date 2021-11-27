@@ -1,19 +1,10 @@
 from .base import BaseClient
+from ..constants import WGR_FLAG, WRW_FLAG
 from ..models import Page, Search, SearchResult, Image, OpenSearch, Summary
 from ..exceptions import NotFound
 
 
 class MediaWiki(BaseClient):
-    WGR_FLAG = (
-        "https://upload.wikimedia.org/wikipedia/commons/thumb" +
-        "/8/85/Flag_of_Belarus.svg/1000px-Flag_of_Belarus.svg.png"
-    )
-
-    WRW_FLAG = (
-        "https://upload.wikimedia.org/wikipedia/commons/thumb" +
-        "/5/50/Flag_of_Belarus_%281918%2C_1991%E2%80%931995%29.svg" +
-        "/1000px-Flag_of_Belarus_%281918%2C_1991%E2%80%931995%29.svg.png"
-    )
 
     LANG = None
 
@@ -46,7 +37,7 @@ class MediaWiki(BaseClient):
 
         return results
 
-    async def page(self, query, section=0, prop="text", blocklist=()) -> Page:
+    async def page(self, query, section=0, prop="text") -> Page:
         if query.__class__ == str:
             params = {"page": query}
         elif query.__class__ == int:
@@ -70,7 +61,7 @@ class MediaWiki(BaseClient):
             pass
 
         page = Page.parse_obj(res.json["parse"])
-        page.tag_blocklist = blocklist
+        page.tag_blocklist = self.tag_blocklist
 
         return page
 
@@ -80,7 +71,7 @@ class MediaWiki(BaseClient):
 
         return Summary.parse_raw(res.text)
 
-    async def image(self, titles, pithumbsize=1000, img_blocklist=()) -> Image:
+    async def image(self, titles, pithumbsize=1000) -> Image:
         res = await self.driver.get(
             titles=titles,
             prop="pageimages",
@@ -117,12 +108,9 @@ class MediaWiki(BaseClient):
 
         try:
             image = await self.image(page.title, prefix=prefix, img_blocklist=img_blocklist)
-            image = image.source
+            image = WRW_FLAG if image.source == WGR_FLAG else image.source
 
         except Exception:
             image = -1
-
-        if image == self.WGR_FLAG:
-            image = self.WRW_FLAG
 
         return page, image, result.link

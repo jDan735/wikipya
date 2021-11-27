@@ -96,7 +96,7 @@ class MediaWiki(BaseClient):
         except AttributeError:
             raise NotFound(f"Not found page with this id: {id}")
 
-    async def get_all(self, query, lurk=False, prefix="w"):
+    async def get_all(self, query, lurk=False):
         search = await self.search(query)
         opensearch = await self.opensearch(
             query if lurk else search[0].title
@@ -106,7 +106,7 @@ class MediaWiki(BaseClient):
         page = await self.page(result.title)
 
         try:
-            image = await self.image(page.title, prefix=prefix)
+            image = await self.image(page.title)
             image = WRW_FLAG if image.source == WGR_FLAG else image.source
 
         except Exception:

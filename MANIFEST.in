@@ -1,2 +1,2 @@
-recursive-include wikipya/clients *.py
+recursive-include wikipya/methods *.py
 recursive-include wikipya/models *.py

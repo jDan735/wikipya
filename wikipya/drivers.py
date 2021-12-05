@@ -21,11 +21,10 @@ class BaseDriver:
 
 @dataclass
 class HttpxDriver(BaseDriver):
-    def __post_init__(self):
-        self._client = httpx.AsyncClient(timeout=self.timeout)
-
     async def get(self, url=None, timeout=None, debug=False, **params):
-        res = await self._client.get(str(url or self.url), params={**self.params, **params})
+        with httpx.AsyncClient(timeout=self.timeout) as client:
+            res = await client.get(str(url or self.url), params={**self.params, **params})
+
         res.json = res.json()
 
         if not isinstance(res.json, list) and (error := res.json.get("error")):
@@ -34,4 +33,5 @@ class HttpxDriver(BaseDriver):
         return res
 
     async def get_html(self, url=None, timeout=None, debug=False, **params):
-        return await self._client.get(str(url or self.url), params=params, follow_redirects=True)
+        with httpx.AsyncClient(timeout=self.timeout) as client:
+            return await client.get(str(url or self.url), params=params, follow_redirects=True)

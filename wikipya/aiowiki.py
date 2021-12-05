@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from typing import Optional
 
 from .clients import BaseClient, MediaWiki, MediaWiki_Lurk
 from .drivers import HttpxDriver

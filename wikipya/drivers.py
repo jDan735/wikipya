@@ -22,7 +22,7 @@ class BaseDriver:
 @dataclass
 class HttpxDriver(BaseDriver):
     async def get(self, url=None, timeout=None, debug=False, **params):
-        with httpx.AsyncClient(timeout=self.timeout) as client:
+        async with httpx.AsyncClient(timeout=self.timeout) as client:
             res = await client.get(str(url or self.url), params={**self.params, **params})
 
         res.json = res.json()
@@ -33,5 +33,5 @@ class HttpxDriver(BaseDriver):
         return res
 
     async def get_html(self, url=None, timeout=None, debug=False, **params):
-        with httpx.AsyncClient(timeout=self.timeout) as client:
+        async with httpx.AsyncClient(timeout=self.timeout) as client:
             return await client.get(str(url or self.url), params=params, follow_redirects=True)

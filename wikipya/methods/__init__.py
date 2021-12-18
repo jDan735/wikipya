@@ -8,3 +8,4 @@ from .opensearch import opensearch
 from .page import page
 from .search import search
 from .summary import summary
+from .sections import sections

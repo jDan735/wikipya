@@ -27,7 +27,8 @@ class MediaWiki(BaseClient):
         opensearch,
         page,
         search,
-        summary
+        summary,
+        sections
     )
 
 

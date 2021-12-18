@@ -1,22 +1,14 @@
 from ..models import Page
+from .lib import query2param
 
 
 async def page(self, query, section=0, prop="text") -> Page:
-    if query.__class__ == str:
-        params = {"page": query}
-    elif query.__class__ == int:
-        params = {"pageid": query}
-    elif query.pageid is not None:
-        params = {"pageid": query.pageid}
-    else:
-        params = {"page": query.title}
-
     res = await self.driver.get(
         action="parse",
         section=section,
         prop=prop,
         redirects="true",
-        **params,
+        **query2param(query),
     )
 
     try:

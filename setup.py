@@ -16,6 +16,7 @@ setup(
     url="https://github.com/jDan735/wikipya",
     license="MIT",
     packages=["wikipya"],
+    include_package_data=True,
     classifiers=[
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.4",
@@ -29,7 +30,8 @@ setup(
     install_requires=[
         "beautifulsoup4",
         "tghtml",
-        "httpx"
+        "httpx",
+        "pydantic"
     ],
     test_suite="tests"
 )

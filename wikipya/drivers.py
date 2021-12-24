@@ -1,103 +1,37 @@
 try:
-    import aiohttp
-except:
-    pass
-
-try:
     import httpx
-except:
-    pass
+except ImportError:
+    print("Not found httpx. Try pip install httpx")
 
-import time
-import json
+from dataclasses import dataclass, field
+from typing import Optional
 
 from .exceptions import ParseError
 
 
-class JSONObject:
-    """JSON => Class"""
-    def __init__(self, dict):
-        self.add(dict)
-
-    def add(self, dict):
-        vars(self).update(dict)
-
-
+@dataclass
 class BaseDriver:
-    def __init__(self, url="example.com", timeout=5, params=()):
-        self.timeout = timeout
-        self.params = params
-        self.url = url
+    url: str = "example.org"
+    timeout: Optional[int] = 5
+    params: dict = field(default_factory=dict)
 
     async def get(self, url, params=(), timeout=None):
         raise NotImplementedError
 
 
-class AiohttpDriver(BaseDriver):
-    async def get(self, url=None, timeout=None, debug=False, **params):
-        if len(list(params.keys())) == 0:
-            params = None
-        else:
-            params = {**self.params, **params}
-
-        async with aiohttp.ClientSession() as session:
-            start = time.time()
-
-            async with session.get(
-                url or self.url, params=params,
-                timeout=timeout or self.timeout
-            ) as response:
-                text = await response.text()
-
-                if debug:
-                    print(response.url)
-                    print(time.time() - start)
-
-                js = json.loads(text, object_hook=JSONObject)
-
-                if isinstance(js, list):
-                    pass
-
-                elif js.__dict__.get("error") is not None:
-                    raise ParseError(f"{js.error.code}: {js.error.info}")
-
-                return js
-
-    async def get_html(self, url=None, timeout=None, debug=False, **params):
-        if len(list(params.keys())) == 0:
-            params = None
-        else:
-            params = {**self.params, **params}
-
-        async with aiohttp.ClientSession() as session:
-            start = time.time()
-
-            async with session.get(
-                url or self.url, params=params,
-                timeout=timeout or self.timeout
-            ) as response:
-                text = await response.text()
-
-                if debug:
-                    print(response.url)
-                    print(time.time() - start)
-
-                return response.status, text, response.url
-
-
+@dataclass
 class HttpxDriver(BaseDriver):
     async def get(self, url=None, timeout=None, debug=False, **params):
-        async with httpx.AsyncClient(timeout=timeout) as client:
-            res = await client.get(url or self.url,
-                                   params={**self.params, **params})
-            js = json.loads(res.text, object_hook=JSONObject)
+        async with httpx.AsyncClient(timeout=self.timeout) as client:
+            res = await client.get(str(url or self.url), params={**self.params, **params})
 
-        if not isinstance(js, list) and res.json().get("error"):
-            raise ParseError(f"{js.error.code}: {js.error.info}")
+        res.json = res.json()
 
-        return js
+        if not isinstance(res.json, list) and (error := res.json.get("error")):
+            raise ParseError(f'{error["code"]}: {error["info"]}')
+
+        return res
 
     async def get_html(self, url=None, timeout=None, debug=False, **params):
-        async with httpx.AsyncClient(timeout=timeout) as client:
-            res = await client.get(url or self.url, params=params)
-            return res.status_code, res.text, res.url
+        async with httpx.AsyncClient(timeout=self.timeout) as client:
+            return await client.get(str(url or self.url), params=params, follow_redirects=True)

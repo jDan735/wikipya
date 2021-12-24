@@ -1,7 +1,10 @@
-__version__ = "3.0.0"
+import traceback
 
 try:
     from .aiowiki import Wikipya, NotFound
-except Exception as e:
-    print(e)
-    pass
+except ImportError:
+    print(traceback.format_exc())
+
+
+__version__ = "4.0.0b3.post2"
+__all__ = ("Wikipya", "NotFound")

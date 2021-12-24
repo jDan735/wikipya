@@ -1,0 +1,2 @@
+recursive-include wikipya/methods *.py
+recursive-include wikipya/models *.py

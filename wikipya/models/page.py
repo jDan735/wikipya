@@ -19,7 +19,7 @@ class Page(BaseModel):
 
     @property
     def parsed(self):
-        return TgHTML(self.text, self.tag_blocklist).parsed
+        return TgHTML(self.text, self.tag_blocklist).parsed.strip()
 
     @property
     def fixed(self):

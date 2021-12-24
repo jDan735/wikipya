@@ -6,21 +6,3 @@ jobs:
     steps:
       - name: GitHub Action for pytest
         uses: cclauss/GitHub-Action-for-pytest@0.5.0
-
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.8
-    - name: Install dependencies
-      run: |
-        pip install -e .
-        pip install -r requirements.txt
-    - name: Lint with flake8
-      run: |
-        flake8 wikipya tests | lintly --log --context=flake8 --commit-sha=${{ github.event.pull_request.head.sha }} --use-checks
-      env:
-        LINTLY_API_KEY: ${{ secrets.GITHUB_TOKEN }}

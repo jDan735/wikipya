@@ -28,7 +28,8 @@ class MediaWiki(BaseClient):
         page,
         search,
         summary,
-        sections
+        sections,
+        search_with_description
     )
 
 

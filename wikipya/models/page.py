@@ -19,7 +19,10 @@ class Page(BaseModel):
 
     @property
     def parsed(self):
-        return TgHTML(self.text, self.tag_blocklist).parsed.strip()
+        if (html := TgHTML(self.text, self.tag_blocklist).parsed) == "":
+            html = TgHTML(self.text, self.tag_blocklist, enable_preprocess=False).parsed
+
+        return html
 
     @property
     def fixed(self):

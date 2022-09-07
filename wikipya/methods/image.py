@@ -16,5 +16,5 @@ async def image(self, titles, pithumbsize=1000) -> Image:
         thumb = image["thumbnail"]
 
         return Image(**thumb)
-    except AttributeError:
-        raise NotFound("Not found image")
+    except AttributeError as e:
+        raise NotFound("Not found image") from e

@@ -23,9 +23,13 @@ class BaseDriver:
 class HttpxDriver(BaseDriver):
     async def get(self, url=None, timeout=None, debug=False, **params):
         async with httpx.AsyncClient(timeout=self.timeout) as client:
-            res = await client.get(str(url or self.url), params={**self.params, **params})
+            res = await client.get(
+                str(url or self.url),
+                params={**self.params, **params},
+                follow_redirects=True,
+            )
 
-        res.json = res.json()
+            res.json = res.json()
 
         if not isinstance(res.json, list) and (error := res.json.get("error")):
             raise ParseError(f'{error["code"]}: {error["info"]}')
@@ -34,4 +38,6 @@ class HttpxDriver(BaseDriver):
 
     async def get_html(self, url=None, timeout=None, debug=False, **params):
         async with httpx.AsyncClient(timeout=self.timeout) as client:
-            return await client.get(str(url or self.url), params=params, follow_redirects=True)
+            return await client.get(
+                str(url or self.url), params=params, follow_redirects=True
+            )

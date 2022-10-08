@@ -322,7 +322,7 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "tghtml"
-version = "1.1.1"
+version = "1.1.2"
 description = "Simple tool for parse common HTML to Telegram HTML"
 category = "main"
 optional = false
@@ -342,7 +342,7 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 
 [[package]]
 name = "typing-extensions"
-version = "4.3.0"
+version = "4.4.0"
 description = "Backported and Experimental Type Hints for Python 3.7+"
 category = "main"
 optional = false
@@ -351,7 +351,7 @@ python-versions = ">=3.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "fb26094ddbbb6093c11b9013ff95e908aa732518a73c759ca05929248f5e7c86"
+content-hash = "5fb3099af3f174a69385440615add8cbdc0e672c51dfb33adb028bab00530b74"
 
 [metadata.files]
 anyio = [
@@ -564,14 +564,14 @@ soupsieve = [
     {file = "soupsieve-2.3.2.post1.tar.gz", hash = "sha256:fc53893b3da2c33de295667a0e19f078c14bf86544af307354de5fcf12a3f30d"},
 ]
 tghtml = [
-    {file = "tghtml-1.1.1-py3-none-any.whl", hash = "sha256:8167da13e38ae6bfbe00665f6ff61904ab431a7fa36afe93a825f366900023a3"},
-    {file = "tghtml-1.1.1.tar.gz", hash = "sha256:8aacd5f19472367cd9c2719b39b2bdd98a1629c51da2e4f6d30ea9f368822aa4"},
+    {file = "tghtml-1.1.2-py3-none-any.whl", hash = "sha256:5f738136308c5a5e992334409be4b75910080df2056e39c7d76e3e8d43184d56"},
+    {file = "tghtml-1.1.2.tar.gz", hash = "sha256:1898bc0e0b9595e6cb863131e74d4284b1154d8e31c188c9f90de1a720da8eee"},
 ]
 toml = [
     {file = "toml-0.10.2-py2.py3-none-any.whl", hash = "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b"},
     {file = "toml-0.10.2.tar.gz", hash = "sha256:b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f"},
 ]
 typing-extensions = [
-    {file = "typing_extensions-4.3.0-py3-none-any.whl", hash = "sha256:25642c956049920a5aa49edcdd6ab1e06d7e5d467fc00e0506c44ac86fbfca02"},
-    {file = "typing_extensions-4.3.0.tar.gz", hash = "sha256:e6d2677a32f47fc7eb2795db1dd15c1f34eff616bcaf2cfb5e997f854fa1c4a6"},
+    {file = "typing_extensions-4.4.0-py3-none-any.whl", hash = "sha256:16fa4864408f655d35ec496218b85f79b3437c829e93320c7c9215ccfd92489e"},
+    {file = "typing_extensions-4.4.0.tar.gz", hash = "sha256:1511434bb92bf8dd198c12b1cc812e800d4181cfcb867674e0f8279cc93087aa"},
 ]

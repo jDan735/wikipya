@@ -16,6 +16,10 @@ beautifulsoup4 = "^4.10.0"
 tghtml = "1.1.4"
 pydantic = "^1.9.0"
 
+[[tool.poetry.source]]
+name = 'pypi-public'
+url = "https://pypi.org/simple/"
+
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
 pytest-lazy-fixture = "^0.6.3"

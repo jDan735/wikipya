@@ -10,7 +10,7 @@ async def search(self, query, limit=1, prop="snippet") -> list[SearchResult]:
         srprop=prop
     )
 
-    results = Search.parse_obj(res.json["query"]["search"]).__root__
+    results = Search.model_validate(res.json["query"]["search"]).root
 
     if len(results) == 0:
         raise NotFound("Search can't find anything on your request")

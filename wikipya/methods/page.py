@@ -15,7 +15,7 @@ async def page(self, query, section=0, prop="text") -> Page:
     with contextlib.suppress(Exception):
         res.json["parse"]["text"] = res.json["parse"]["text"]["*"]
 
-    page = Page.parse_obj(res.json["parse"])
+    page = Page.model_validate(res.json["parse"])
     page.tag_blocklist = self.tag_blocklist
 
     return page

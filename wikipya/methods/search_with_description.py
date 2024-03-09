@@ -22,7 +22,7 @@ async def search_with_description(
     )
 
     results_raw = sorted(res.json["query"]["pages"], key=lambda x: x["index"])
-    results = SearchWithDescription.parse_obj(results_raw).__root__
+    results = SearchWithDescription.model_validate(results_raw).root
 
     if len(results) == 0:
         raise NotFound("Search can't find anything on your request")

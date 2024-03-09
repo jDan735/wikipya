@@ -34,7 +34,7 @@ async def get_images_list(self, titles) -> list[str]:
         section=0
     )
 
-    return Images.parse_obj(r.json["parse"]).images
+    return Images.model_validate(r.json["parse"]).images
 
 
 async def get_image(self, name) -> Image:

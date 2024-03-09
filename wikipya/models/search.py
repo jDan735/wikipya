@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, RootModel
 from typing import Optional
 
 from .image import Image
@@ -6,23 +6,19 @@ from .image import Image
 
 class SearchResult(BaseModel):
     title: str
-    snippet: Optional[str]
-    size: Optional[int]
-    page_id: Optional[int] = Field(alias="pageid")
+    snippet: Optional[str] = None
+    size: Optional[int] = None
+    page_id: Optional[int] = Field(None, alias="pageid")
 
 
 class SearchResultWithDescripion(BaseModel):
-    page_id: Optional[int] = Field(alias="pageid")
+    page_id: Optional[int] = Field(None, alias="pageid")
     title: str
     index: int
-    thumbnail: Optional[Image]
-    description: Optional[str]
-    description_source: Optional[str] = Field(alias="descriptionsource")
+    thumbnail: Optional[Image] = None
+    description: Optional[str] = None
+    description_source: Optional[str] = Field(None, alias="descriptionsource")
 
 
-class Search(BaseModel):
-    __root__: list[SearchResult]
-
-
-class SearchWithDescription(BaseModel):
-    __root__: list[SearchResultWithDescripion]
+Search = RootModel[list[SearchResult]]
+SearchWithDescription = RootModel[list[SearchResultWithDescripion]]

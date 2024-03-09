@@ -16,10 +16,10 @@ class Summary(BaseModel):
     title: str
     page_id: int = Field(alias="pageid")
 
-    thumbnail: Optional[Image]
-    original_image: Optional[Image] = Field(alias="originalimage")
+    thumbnail: Optional[Image] = None
+    original_image: Optional[Image] = Field(None, alias="originalimage")
 
-    description: Optional[str]
+    description: Optional[str] = None
 
     extract: str
     extract_html: str

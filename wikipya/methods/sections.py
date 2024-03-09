@@ -10,4 +10,4 @@ async def sections(self, query) -> Page:
         **query2param(query),
     )
 
-    return Page.parse_obj(res.json["parse"])
+    return Page.model_validate(res.json["parse"])

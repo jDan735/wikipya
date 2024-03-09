@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "wikipya"
-version = "4.0.5.post1"
+version = "4.0.6"
 description = "A simple async python library for search pages and images in wikis"
 authors = ["Daniel Zakharov <gzdan734@gmail.com>"]
 license = "MIT"
@@ -16,9 +16,10 @@ beautifulsoup4 = "^4.10.0"
 tghtml = "1.1.4"
 pydantic = "^2.6.3"
 
+
 [[tool.poetry.source]]
-name = 'pypi-public'
-url = "https://pypi.org/simple/"
+name = "PyPI"
+priority = "primary"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"

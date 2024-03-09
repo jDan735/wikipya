@@ -10,12 +10,12 @@ from .section import Section
 
 class Page(BaseModel):
     title: str
-    pageid: Optional[int]
+    pageid: Optional[int] = None
 
-    text: Optional[str]
-    sections: Optional[list[Section]]
+    text: Optional[str] = None
+    sections: Optional[list[Section]] = None
 
-    tag_blocklist: Optional[list] = Field(repr=False)
+    tag_blocklist: Optional[list] = Field(None, repr=False)
 
     @property
     def parsed(self):

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "wikipya"
-version = "4.0.8"
+version = "4.0.9"
 description = "A simple async python library for search pages and images in wikis"
 authors = ["Daniel Zakharov <gzdan734@gmail.com>"]
 license = "MIT"

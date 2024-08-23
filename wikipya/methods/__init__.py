@@ -10,3 +10,4 @@ from .search import search
 from .summary import summary
 from .sections import sections
 from .search_with_description import search_with_description
+from .fd_search import fandom_search

@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 
 from .drivers import BaseDriver, HttpxDriver
-from .constants import TAG_BLOCKLIST, IMAGE_BLOCKLIST, DEFAULT_PARAMS
+from .constants import TAG_BLOCKLIST, DEFAULT_PARAMS
 
 
 @dataclass
@@ -10,7 +10,7 @@ class BaseClient:
     driver: BaseDriver = field(repr=False, default_factory=HttpxDriver)
 
     tag_blocklist: list = field(repr=False, default_factory=lambda: TAG_BLOCKLIST)
-    img_blocklist: list = field(repr=False, default_factory=lambda: IMAGE_BLOCKLIST)
+    img_blocklist: list = field(repr=False, default_factory=lambda: [])
 
     default_params: dict = field(repr=False, default_factory=lambda: DEFAULT_PARAMS)
 
@@ -27,9 +27,39 @@ class MediaWiki(BaseClient):
         opensearch,
         page,
         search,
+        sections,
+        search_with_description,
+    )
+
+
+@dataclass
+class Wikipedia(BaseClient):
+    from .methods import (
+        get_all,
+        get_page_name,
+        image,
+        opensearch,
+        page,
+        search,
         summary,
         sections,
-        search_with_description
+        search_with_description,
+    )
+
+
+@dataclass
+class Fandom(BaseClient):
+    from .methods import (
+        get_all,
+        get_page_name,
+        image,
+        opensearch,
+        page,
+        search,
+        summary,
+        sections,
+        search_with_description,
+        fandom_search,
     )
 
 
@@ -41,3 +71,22 @@ class MediaWiki_Legacy(MediaWiki):
 @dataclass
 class MediaWiki_Lurk(MediaWiki_Legacy):
     pass
+
+
+@dataclass
+class MediaWikiAbstract(BaseClient):
+    from .methods import (
+        get_all,
+        get_page_name,
+        image,
+        opensearch,
+        page,
+        search,
+        summary,
+        sections,
+        search_with_description,
+        get_images_list,
+        get_image,
+        legacy_image,
+        fandom_search,
+    )

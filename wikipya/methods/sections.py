@@ -2,12 +2,18 @@ from .lib import query2param
 from ..models import Page
 
 
-async def sections(self, query) -> Page:
-    res = await self.driver.get(
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ..clients import MediaWikiAbstract
+
+
+async def sections(self: "MediaWikiAbstract", query: str) -> Page:
+    _, json = await self.get(
         action="parse",
         prop="sections",
         redirects="true",
         **query2param(query),
     )
 
-    return Page.model_validate(res.json["parse"])
+    return Page.model_validate(json["parse"])

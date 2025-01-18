@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from tghtml import TgHTML
+from .tghtml import TgHTML
 
 from bs4 import BeautifulSoup
 
@@ -12,7 +12,7 @@ class Page(BaseModel):
     title: str
     pageid: Optional[int] = None
 
-    text: Optional[str] = None
+    text: Optional[str]
     sections: Optional[list[Section]] = None
 
     tag_blocklist: Optional[list] = Field(None, repr=False)

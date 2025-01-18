@@ -2,8 +2,16 @@ from ..models import Image
 from ..exceptions import NotFound
 
 
-async def image(self, titles, pithumbsize=1000) -> Image:
-    res = await self.driver.get(
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ..clients import MediaWikiAbstract
+
+
+async def image(
+    self: "MediaWikiAbstract", titles: str, pithumbsize: int = 1000
+) -> Image:
+    _, json = await self.get(
         titles=titles,
         prop="pageimages",
         pilicense="any",
@@ -12,7 +20,7 @@ async def image(self, titles, pithumbsize=1000) -> Image:
     )
 
     try:
-        image = res.json["query"]["pages"][-1]
+        image = json["query"]["pages"][-1]
         thumb = image["thumbnail"]
 
         return Image(**thumb)

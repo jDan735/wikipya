@@ -1,11 +1,11 @@
 import re
 
-from dataclasses import dataclass
+from pydantic.dataclasses import dataclass
 from typing import Optional
 
 
 @dataclass
-class URL:
+class MediawikiUrl:
     base_url: str = "https://{lang}.wikipedia.org/w/api.php"
     lang: Optional[str] = "ru"
     prefix: str = "/w"

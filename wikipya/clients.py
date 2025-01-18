@@ -1,27 +1,50 @@
-from dataclasses import dataclass, field
+import httpx
 
-from .drivers import BaseDriver, HttpxDriver
+from typing import Any, Optional
+from pydantic import BaseModel, Field
+
+from .models import MediawikiUrl
 from .constants import TAG_BLOCKLIST, DEFAULT_PARAMS
+from .exceptions import ParseError
 
 
-@dataclass
-class BaseClient:
-    url: str
-    driver: BaseDriver = field(repr=False, default_factory=HttpxDriver)
+class BaseClient(BaseModel):
+    url: MediawikiUrl
+    timeout: Optional[int] = 5
 
-    tag_blocklist: list = field(repr=False, default_factory=lambda: TAG_BLOCKLIST)
-    img_blocklist: list = field(repr=False, default_factory=lambda: [])
+    tag_blocklist: list[str] = Field(repr=False, default=TAG_BLOCKLIST)
+    default_params: dict[str, str | int] = Field(repr=False, default=DEFAULT_PARAMS)
 
-    default_params: dict = field(repr=False, default_factory=lambda: DEFAULT_PARAMS)
+    async def get(
+        self, url: Optional[str] = None, **params: Any
+    ) -> tuple[httpx.Response, Any]:
+        async with httpx.AsyncClient(timeout=self.timeout) as client:
+            res: httpx.Response = await client.get(
+                str(url or self.url),
+                params={**self.default_params, **params},
+                follow_redirects=True,
+            )
 
-    def __post_init__(self):
-        self.driver = self.driver(self.url, params=self.default_params)
+        json: Any = res.json()
+
+        try:
+            if error := json.get("error"):
+                raise ParseError(f'{error["code"]}: {error["info"]}')
+        except:  # noqa: E722
+            pass
+
+        return res, json
+
+    async def get_html(self, url: Optional[str] = None, **params: Any):
+        async with httpx.AsyncClient(timeout=self.timeout) as client:
+            return await client.get(
+                str(url or self.url), params=params, follow_redirects=True
+            )
 
 
-@dataclass
 class MediaWiki(BaseClient):
     from .methods import (
-        get_all,
+        fetch_all,
         get_page_name,
         image,
         opensearch,
@@ -32,61 +55,28 @@ class MediaWiki(BaseClient):
     )
 
 
-@dataclass
-class Wikipedia(BaseClient):
-    from .methods import (
-        get_all,
-        get_page_name,
-        image,
-        opensearch,
-        page,
-        search,
-        summary,
-        sections,
-        search_with_description,
-    )
+class Wikipedia(MediaWiki):
+    from .methods import summary
 
 
-@dataclass
-class Fandom(BaseClient):
+class Fandom(MediaWiki):
     from .methods import (
-        get_all,
-        get_page_name,
-        image,
-        opensearch,
-        page,
-        search,
-        summary,
-        sections,
-        search_with_description,
         fandom_search,
+        fandom_facade_search as search,
     )
 
 
-@dataclass
-class MediaWiki_Legacy(MediaWiki):
-    from .methods import get_images_list, get_image, legacy_image as image
-
-
-@dataclass
-class MediaWiki_Lurk(MediaWiki_Legacy):
-    pass
-
-
-@dataclass
 class MediaWikiAbstract(BaseClient):
     from .methods import (
-        get_all,
+        fetch_all,
         get_page_name,
         image,
         opensearch,
         page,
         search,
+        search as legacy_search,
         summary,
         sections,
         search_with_description,
-        get_images_list,
-        get_image,
-        legacy_image,
         fandom_search,
     )

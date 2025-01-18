@@ -1,6 +1,5 @@
 from .page import Page
 from .image import Image
-from .images import Images
 from .search import (
     Search,
     SearchResult,
@@ -8,7 +7,7 @@ from .search import (
     SearchWithDescription,
 )
 from .opensearch import OpenSearch, OpenSearchResult
-from .url import URL
+from .url import MediawikiUrl
 from .summary import Summary
 from .section import Section
 from .suggestion import QuickSearchResults, Suggestion, Redirect
@@ -17,14 +16,16 @@ from .suggestion import QuickSearchResults, Suggestion, Redirect
 __all__ = (
     "Page",
     "Image",
-    "Images",
     "Search",
     "SearchResult",
     "SearchResultWithDescripion",
     "SearchWithDescription",
     "OpenSearch",
     "OpenSearchResult",
-    "URL",
+    "MediawikiUrl",
     "Summary",
     "Section",
+    "QuickSearchResults",
+    "Suggestion",
+    "Redirect",
 )

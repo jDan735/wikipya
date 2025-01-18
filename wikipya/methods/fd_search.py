@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 async def fandom_search(
     self: "MediaWikiAbstract", query: str, limit: int = 1
 ) -> list[Suggestion]:
-    res = await self.driver.get(
+    _, json = await self.get(
         url=self.url.url.replace("api.php", "wikia.php"),
         query=query,
         limit=limit,
@@ -27,17 +27,17 @@ async def fandom_search(
         scope="internal",
     )
 
-    if len(res.json["suggestions"]) == 0:
+    if len(json["suggestions"]) == 0:
         raise NotFound("Search can't find anything on your request")
 
-    sugs = []
+    sugs: list[Suggestion] = []
 
-    for name in res.json["suggestions"]:
-        id = res.json["ids"][name]
-        image = res.json["images"][str(id)]
+    for name in json["suggestions"]:
+        id = json["ids"][name]
+        image = json["images"][str(id)]
 
         sugs.append(Suggestion(page_id=id, title=name, image=image))
 
-    results = QuickSearchResults(sugs[:limit])
+    results = QuickSearchResults(sugs[:limit])  # type: ignore
 
     return results.root

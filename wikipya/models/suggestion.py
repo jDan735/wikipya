@@ -7,7 +7,7 @@ from pydantic import HttpUrl
 Redirect = RootModel[str]
 
 
-def to_key(x: Optional[str]) -> str:
+def to_key(x: str) -> str:
     return x.title().replace(" ", "_")
 
 
@@ -15,7 +15,7 @@ class Suggestion(BaseModel):
     page_id: int = Field(validation_alias=AliasChoices("pageid", "page_id"))
     image: Optional[HttpUrl] = None
 
-    key_: Optional[str] = Field(default=None, repr=None)
+    key_: Optional[str] = Field(default=None, repr=None)  # type: ignore
     title: str
 
     description: Optional[str] = None
@@ -28,5 +28,4 @@ class Suggestion(BaseModel):
         return to_key(self.title)
 
 
-class QuickSearchResults(RootModel):
-    root: list[Suggestion | Redirect]
+QuickSearchResults = RootModel[list[Suggestion]]

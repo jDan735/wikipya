@@ -1,14 +1,15 @@
-from dataclasses import dataclass, field
-from typing import Any
+from pydantic.dataclasses import dataclass
+from pydantic import Field
+from typing import Optional
 
 
 @dataclass
 class OpenSearch:
     query: str
-    _variants: list = field(default_factory=list, repr=False)
-    descriptions: list = field(default_factory=list, repr=False)
-    links: list = field(default_factory=list, repr=False)
-    results: Any = field(default_factory=list)
+    _variants: list[str] = Field(default_factory=list, repr=False)
+    descriptions: list[str] = Field(default_factory=list, repr=False)
+    links: list[str] = Field(default_factory=list, repr=False)
+    results: list["OpenSearchResult"] = Field(default_factory=list)
 
     def __post_init__(self):
         for i, variant in enumerate(self._variants):
@@ -20,4 +21,4 @@ class OpenSearch:
 @dataclass
 class OpenSearchResult:
     title: str
-    link: str = None
+    link: Optional[str] = None

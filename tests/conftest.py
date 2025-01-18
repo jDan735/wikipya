@@ -1,17 +1,18 @@
 import pytest
 from wikipya import Wikipya
-from wikipya.clients import MediaWiki_Legacy
 from pytest_lazyfixture import lazy_fixture
 
 from params import Params
 
 
-@pytest.fixture(params=[
-    lazy_fixture("lurkmore"),
-    lazy_fixture("wikipedia"),
-    lazy_fixture("fallout"),
-    lazy_fixture("kaiserreich")
-])
+@pytest.fixture(
+    params=[
+        lazy_fixture("buckshot"),
+        lazy_fixture("wikipedia"),
+        lazy_fixture("fallout"),
+        lazy_fixture("kaiserreich"),
+    ]
+)
 def params(request):
     return request.param
 
@@ -21,16 +22,10 @@ def lurkmore():
     """Went lurkmore instance"""
 
     return Params(
-        client=Wikipya(
-            base_url="https://ipv6.lurkmo.re/api.php",
-            prefix="",
-            # img_blocklist=blocklist["images"]
-            is_lurk=True
-        ).get_instance(),
-
+        client=Wikipya(base_url="https://ipv6.lurkmo.re/api.php", prefix=""),
         search_limit=1,
         search_query="эта страна",
-        image_query="Украина"
+        image_query="Украина",
     )
 
 
@@ -39,7 +34,7 @@ def wikipedia():
     """Went wikipedia instance"""
 
     return Params(
-        client=Wikipya("ru").get_instance(),
+        client=Wikipya("ru"),
     )
 
 
@@ -48,14 +43,25 @@ def fallout():
     """Went fallout instance"""
 
     return Params(
-        client=Wikipya(
-            base_url="https://fallout.fandom.com/ru/api.php",
-            prefix="",
-            client=MediaWiki_Legacy
-        ).get_instance(),
+        client=Wikipya(base_url="https://fallout.fandom.com/ru/api.php", prefix=""),
         search_query="Марипоза",
         search_limit=1,
-        image_query="Стрип"
+        image_query="Стрип",
+    )
+
+
+@pytest.fixture(scope="class")
+def buckshot():
+    """Went buckshot instance"""
+
+    return Params(
+        client=Wikipya(
+            base_url="https://buckshot-roulette.fandom.com/api.php",
+            prefix="",
+        ),
+        search_query="Expired Medicine",
+        search_limit=1,
+        image_query="Expired Medicine",
     )
 
 
@@ -67,8 +73,7 @@ def kaiserreich():
         client=Wikipya(
             base_url="https://kaiserreich.fandom.com/ru/api.php",
             prefix="",
-            client=MediaWiki_Legacy
-        ).get_instance(),
+        ),
         search_query="Германская империя",
-        search_limit=1
+        search_limit=1,
     )

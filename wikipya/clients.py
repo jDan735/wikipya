@@ -24,7 +24,11 @@ class BaseClient(BaseModel):
     client: Any | None = None
 
     def model_post_init(self, __context: Any) -> None:
-        self.client = httpx.AsyncClient(timeout=self.timeout, headers=HEADERS)
+        self.client = httpx.AsyncClient(
+            timeout=self.timeout,
+            headers=HEADERS,
+            http2=True,
+        )
 
     async def get(
         self, url: Optional[str] = None, **params: Any

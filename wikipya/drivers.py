@@ -22,7 +22,10 @@ class BaseDriver:
 @dataclass
 class HttpxDriver(BaseDriver):
     async def get(self, url=None, timeout=None, debug=False, **params):
-        async with httpx.AsyncClient(timeout=self.timeout) as client:
+        async with httpx.AsyncClient(timeout=self.timeout, headers={
+            "User-Agent": "Mozilla/5.0 (iPad; CPU OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+            "Accept-Encoding": "gzip",
+        }) as client:
             res = await client.get(
                 str(url or self.url),
                 params={**self.params, **params},
@@ -37,7 +40,10 @@ class HttpxDriver(BaseDriver):
         return res
 
     async def get_html(self, url=None, timeout=None, debug=False, **params):
-        async with httpx.AsyncClient(timeout=self.timeout) as client:
+        async with httpx.AsyncClient(timeout=self.timeout, headers={
+            "User-Agent": "Mozilla/5.0 (iPad; CPU OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+            "Accept-Encoding": "gzip",
+        }) as client:
             return await client.get(
                 str(url or self.url), params=params, follow_redirects=True
             )

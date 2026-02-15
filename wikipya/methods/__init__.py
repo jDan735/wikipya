@@ -7,6 +7,7 @@ from .search import search
 from .summary import summary
 from .sections import sections
 from .search_with_description import search_with_description
+from .rest_search import rest_search
 from .fd_search import fandom_search
 from .fa_facade_search import fandom_facade_search
 
@@ -21,6 +22,7 @@ __all__ = (
     "summary",
     "sections",
     "search_with_description",
+    "rest_search",
     "fandom_search",
     "fandom_facade_search",
 )

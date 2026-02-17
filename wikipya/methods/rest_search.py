@@ -14,7 +14,7 @@ async def rest_search(
     prop: str = "",
 ) -> list[Suggestion]:
     _, json = await self.get(
-        self.url.url.replace("api.php", "rest.php") + "/v1/search/title",
+        self.url.cleaned + "/w/rest.php/v1/search/title",
         q=query,
         limit=limit,
     )

@@ -2,7 +2,10 @@ from typing import Any
 from .clients import MediaWiki, Fandom, Wikipedia, MediaWikiAbstract
 from .models import MediawikiUrl
 
-from httpx import URL
+try:
+    from httpx import URL
+except ModuleNotFoundError:
+    from yarl import URL
 
 
 def Wikipya(
@@ -13,6 +16,8 @@ def Wikipya(
 ) -> MediaWikiAbstract:
     match URL(base_url).host.split(".")[-2]:
         case "wikipedia":
+            client = Wikipedia
+        case "wiktionary":
             client = Wikipedia
         case "fandom":
             client = Fandom

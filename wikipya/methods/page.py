@@ -9,6 +9,7 @@ async def page(self, query, section=0, prop="text") -> Page:
         section=section,
         prop=prop,
         redirects="true",
+        disablelimitreport=True,
         **query2param(query),
     )
 

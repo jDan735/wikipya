@@ -1,9 +1,7 @@
-from pydantic import BaseModel, Field
-from .tghtml import TgHTML
-
-from bs4 import BeautifulSoup
-
 from typing import Optional
+
+from pydantic import BaseModel, Field
+from tghtml import TgHTML
 
 from .section import Section
 
@@ -19,7 +17,7 @@ class Page(BaseModel):
 
     @property
     def parsed(self):
-        if (html := TgHTML(self.text, self.tag_blocklist).parsed) == "":
+        if (html := TgHTML(self.text, self.tag_blocklist or []).parsed) == "":
             html = TgHTML(self.text, self.tag_blocklist, enable_preprocess=False).parsed
 
         return html
@@ -31,6 +29,8 @@ class Page(BaseModel):
 
     @property
     def section_name(self):
+        from bs4 import BeautifulSoup
+
         soup = BeautifulSoup(self.text, "lxml")
         spans = soup.find_all("span")
 

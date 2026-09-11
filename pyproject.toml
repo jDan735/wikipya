@@ -4,7 +4,7 @@ version = "4.1.6"
 description = "A simple async python library for search pages and images in wikis"
 readme = "README.md"
 license = "MIT"
-requires-python = ">=3.10"
+requires-python = ">=3.10,<3.15"
 authors = [
     { name = "Daniel Zakharov", email = "gzdan734@gmail.com" }
 ]
@@ -12,14 +12,10 @@ dependencies = [
     "aiohttp>=3.13.3",
     "msgspec>=0.20.0",
     "pydantic>=2.12.5",
-    "tghtml>=2.0.0",
+    "tghtml @ git+https://github.com/jdan735/tghtml@dev",
 ]
 
 [tool.pytest.ini_options]
 addopts = "-p no:warnings"
 norecursedirs = ".svn _build tmp*"
 testpaths = "tests"
-
-[tool.uv.sources]
-tghtml = { git = "https://github.com/jdan735/tghtml", branch = "dev" }
-# tghtml = { path = "../tghtml" }

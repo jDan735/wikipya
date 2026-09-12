@@ -15,7 +15,10 @@ dependencies = [
     "tghtml @ git+https://github.com/jdan735/tghtml@dev",
 ]
 
-[tool.pytest.ini_options]
-addopts = "-p no:warnings"
-norecursedirs = ".svn _build tmp*"
-testpaths = "tests"
+[tool.pdm.scripts]
+test = {cmd = "python -m unittest tests/basic_tests.py"}
+
+[dependency-groups]
+dev = [
+    "parameterized>=0.9.0",
+]

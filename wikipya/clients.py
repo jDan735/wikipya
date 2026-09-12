@@ -30,9 +30,14 @@ class HttpxClient(BaseModel):
     default_params: dict[str, str | int] = Field(repr=False, default=DEFAULT_PARAMS)
 
     client: Any | None = None
+    automatic_session_open: bool = True
     automatic_session_close: bool = True
 
     def model_post_init(self, __context: Any) -> None:
+        if self.automatic_session_open:
+            self.open()
+
+    def open(self) -> None:
         self.client = httpx.AsyncClient(
             timeout=self.timeout,
             headers=HEADERS,
@@ -57,7 +62,7 @@ class HttpxClient(BaseModel):
             pass
 
         return res, _
-    
+
     async def close(self):...
 
     async def get_html(self, url: Optional[str] = None, **params: Any):
@@ -74,9 +79,14 @@ class AiohttpClient(BaseModel):
     default_params: dict[str, str | int] = Field(repr=False, default=DEFAULT_PARAMS)
 
     session: Optional[Any] = None
+    automatic_session_open: bool = True
     automatic_session_close: bool = True
 
     def model_post_init(self, __context: Any) -> None:
+        if self.automatic_session_open:
+            self.open()
+
+    def open(self) -> None:
         self.session = aiohttp.ClientSession(
             timeout=aiohttp.ClientTimeout(self.timeout),
             headers=HEADERS,

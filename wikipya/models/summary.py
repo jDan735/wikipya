@@ -1,23 +1,31 @@
+from msgspec import Struct, field
 from pydantic import BaseModel, Field
 from typing import Optional
 
-from .image import Image
+
+class Image(Struct, frozen=True):
+    source: str
+    width: Optional[int] = None
+    height: Optional[int] = None
 
 
-class DesktopUrls(BaseModel):
+class DesktopUrls(Struct, frozen=True):
     page: str
 
 
-class ContentUrls(BaseModel):
+class ContentUrls(Struct, frozen=True):
     desktop: DesktopUrls
 
 
-class Summary(BaseModel):
+class Summary(Struct, frozen=True, kw_only=True):
     title: str
-    page_id: int = Field(alias="pageid")
+    page_id: int = Field(name="pageid")
 
     thumbnail: Optional[Image] = None
-    original_image: Optional[Image] = Field(None, alias="originalimage")
+    original_image: Optional[Image] = field(
+        default=None,
+        name="originalimage",
+    )
 
     description: Optional[str] = None
 

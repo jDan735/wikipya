@@ -1,4 +1,5 @@
 from ..models import Summary
+from msgspec import json
 
 from typing import TYPE_CHECKING
 
@@ -7,6 +8,6 @@ if TYPE_CHECKING:
 
 
 async def summary(self: "MediaWikiAbstract", title: str) -> Summary:
-    res = await self.get_html(f"{self.url.cleaned}api/rest_v1/page/summary/{title}")
+    _, res = await self.get_html(f"{self.url.cleaned}api/rest_v1/page/summary/{title}")
 
-    return Summary.model_validate(res.json())
+    return Summary.model_validate(json.decode(res))

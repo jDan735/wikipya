@@ -14,7 +14,7 @@ from .models import MediawikiUrl
 from .constants import TAG_BLOCKLIST, DEFAULT_PARAMS
 from .exceptions import ParseError
 
-from msgspec import json
+from msgspec import DecodeError, json
 
 HEADERS: dict[str, str] = {
     "User-Agent": "Mozilla/5.0 (iPad; CPU OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
@@ -45,7 +45,7 @@ class HttpxClient(BaseModel):
         )
 
     async def get(
-        self, url: Optional[str] = None, **params: Any
+        self, url: Optional[str] = None, type: Any = Any, **params: Any
     ) -> tuple[httpx.Response, Any]:
         res: httpx.Response = await self.client.get(
             str(url or self.url),
@@ -53,7 +53,10 @@ class HttpxClient(BaseModel):
             follow_redirects=True,
         )
 
-        _: Any = json.decode(res.text)
+        try:
+            _: Any = json.decode(res.text, type=type)
+        except DecodeError:
+            raise ValueError("Broken input (not json?)\n" + text)
 
         try:
             if error := _.get("error"):
@@ -93,7 +96,11 @@ class AiohttpClient(BaseModel):
         )
 
     async def get(
-        self, url: Optional[str] = None, close_me: bool=True, **params: Any
+        self,
+        url: Optional[str] = None,
+        close_me: bool=True,
+        type: Any = Any,
+        **params: Any
     ) -> tuple[aiohttp.Response, Any]:
         res: aiohttp.Response = await self.session.get(
             str(url or self.url),
@@ -101,7 +108,12 @@ class AiohttpClient(BaseModel):
             allow_redirects=True,
         )
 
-        _: Any = json.decode(await res.text())
+        test = await res.text()
+
+        try:
+            _: Any = json.decode(text, type=type)
+        except DecodeError:
+            raise ValueError(text)
 
         if self.automatic_session_close:
             await self.session.close()
@@ -140,6 +152,7 @@ class BaseClient(HttpxClient if http_client == "httpx" else AiohttpClient): ...
 class MediaWiki(BaseClient):
     from .methods import (
         fetch_all,
+        check_page,
         get_page_name,
         image,
         opensearch,

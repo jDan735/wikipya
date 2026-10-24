@@ -1,24 +1,21 @@
-from pydantic.dataclasses import dataclass
-from pydantic import Field
 from typing import Optional
 
+from msgspec import Struct
 
-@dataclass
-class OpenSearch:
+
+class OpenSearch(Struct, frozen=True, array_like=True):
     query: str
-    _variants: list[str] = Field(default_factory=list, repr=False)
-    descriptions: list[str] = Field(default_factory=list, repr=False)
-    links: list[str] = Field(default_factory=list, repr=False)
-    results: list["OpenSearchResult"] = Field(default_factory=list)
+    titles: list[str]
+    descriptions: list[str]
+    links: list[str]
 
-    def __post_init__(self):
-        for i, variant in enumerate(self._variants):
-            link = self.links[i] if len(self.links) > 0 else None
+    def prettify(self) -> list[OpenSearchResult]:
+        return [
+            OpenSearchResult(title, self.links[i])
+            for i, title in enumerate(self.titles)
+        ]
 
-            self.results.append(OpenSearchResult(variant, link))
 
-
-@dataclass
-class OpenSearchResult:
+class OpenSearchResult(Struct, frozen=True):
     title: str
-    link: Optional[str] = None
+    link: str | None = None

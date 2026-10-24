@@ -1,4 +1,4 @@
-from ..models import OpenSearch
+from ..models import OpenSearch, OpenSearchResult
 from ..exceptions import NotFound
 
 from typing import TYPE_CHECKING
@@ -9,16 +9,16 @@ if TYPE_CHECKING:
 
 async def opensearch(
     self: "MediaWikiAbstract", query: str, limit: int = 1
-) -> OpenSearch:
-    _, json = await self.get(
+) -> list[OpenSearchResult]:
+    _, res = await self.get(
         action="opensearch",
         search=query,
         limit=limit,
+        type=OpenSearch,
     )
+    results = res.prettify()
 
-    results = OpenSearch(*json)
-
-    if len(results.results) == 0:
+    if len(results) == 0:
         raise NotFound("OpenSearch can't find anything on your request")
 
     return results

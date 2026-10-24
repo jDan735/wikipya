@@ -21,7 +21,7 @@ async def fetch_all(
         title = search[0].title
 
     opensearch = await self.opensearch(title)
-    result = opensearch.results[0]
+    result = opensearch[0]
 
     page = await self.page(result.title, to_section=to_section)
 

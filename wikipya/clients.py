@@ -56,7 +56,7 @@ class HttpxClient(BaseModel):
         try:
             _: Any = json.decode(res.text, type=type)
         except DecodeError:
-            raise ValueError("Broken input (not json?)\n" + text)
+            raise ValueError("Broken input (not json?)\n" + res.text)
 
         try:
             if error := _.get("error"):
@@ -108,7 +108,7 @@ class AiohttpClient(BaseModel):
             allow_redirects=True,
         )
 
-        test = await res.text()
+        text = await res.text()
 
         try:
             _: Any = json.decode(text, type=type)

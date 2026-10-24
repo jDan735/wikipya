@@ -9,13 +9,20 @@ if TYPE_CHECKING:
 async def fetch_all(
     self: "MediaWikiAbstract", query: str | int, to_section: int = 0
 ) -> tuple[Page, Image | None, str | None]:
+    self.automatic_session_close = False
+
     if isinstance(query, int):
         query = await self.get_page_name(query)
 
-    search = await self.search(query)
-    opensearch = await self.opensearch(search[0].title)
+    try:
+        _, title = await self.check_page(query)
+    except NotFound:
+        search = await self.search(query)
+        title = search[0].title
 
+    opensearch = await self.opensearch(title)
     result = opensearch.results[0]
+
     page = await self.page(result.title, to_section=to_section)
 
     try:
@@ -23,4 +30,5 @@ async def fetch_all(
     except (NotFound, KeyError):
         image = None
 
+    await self.close()
     return page, image, result.link

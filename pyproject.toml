@@ -17,6 +17,7 @@ dependencies = [
 
 [tool.pdm.scripts]
 test = {cmd = "python -m unittest tests/basic_tests.py"}
+tree = {cmd = "pdm list --tree"}
 
 [dependency-groups]
 dev = [

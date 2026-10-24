@@ -1,4 +1,5 @@
 from .fetch_all import fetch_all
+from .check_page import check_page
 from .get_page_name import get_page_name
 from .image import image
 from .opensearch import opensearch
@@ -14,6 +15,7 @@ from .fa_facade_search import fandom_facade_search
 
 __all__ = (
     "fetch_all",
+    "check_page",
     "get_page_name",
     "image",
     "opensearch",

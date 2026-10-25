@@ -39,7 +39,7 @@ class Test(IsolatedAsyncioTestCase):
     @parameterized.expand(clients)
     async def test_opensearch(self, client: Wikipya, params: Params):
         results = await client.opensearch(params.search_query, params.search_limit)
-        assert len(results.results) == params.search_limit
+        assert len(results) == params.search_limit
 
     @parameterized.expand([clients[0]])
     async def test_get_page_name(self, client: Wikipya, params: Params):
@@ -52,8 +52,30 @@ class Test(IsolatedAsyncioTestCase):
 
     @parameterized.expand(clients)
     async def test_image(self, client: Wikipya, params: Params):
+        if params.image_query is None:
+            return
+
         image = await client.image(params.image_query)
 
         if params.check_image_res:
             assert image.width > 0
             assert image.height > 0
+
+    @parameterized.expand(clients)
+    async def test_check_page(self, client: Wikipya, params: Params):
+        page_id = await client.check_page(params.search_query)
+        assert page_id == params.search_query_id
+
+    @parameterized.expand([clients[0]])
+    async def test_fetch_all(self, client: Wikipya, params: Params):
+        await client.fetch_all("Патрик Тёрнер")
+
+    @parameterized.expand([clients[4]])
+    async def test_inline_image_fetch(self, client: Wikipya, params: Params):
+        page = await client.page("blood")
+        image = page.fetch_image()
+
+        assert (
+            image.source ==
+            "/images/thumb/2/2c/Blood_artwork.jpg/440px-Blood_artwork.jpg"
+        )

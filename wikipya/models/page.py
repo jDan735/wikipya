@@ -40,3 +40,15 @@ class Page(BaseModel):
 
             elif not span["id"].startswith("."):
                 return span["id"]
+
+    def fetch_image(self):
+        from selectolax.lexbor import LexborHTMLParser
+        from .image import Image
+
+        image = (
+            LexborHTMLParser(self.text)
+            .css_first("img")
+            .attributes.get("srcset", "")
+        )
+
+        return Image(source=image.split(" ")[-2])

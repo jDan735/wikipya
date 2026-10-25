@@ -33,6 +33,8 @@ class HttpxClient(BaseModel):
     automatic_session_open: bool = True
     automatic_session_close: bool = True
 
+    fetch_image_from_page: bool = False
+
     def model_post_init(self, __context: Any) -> None:
         if self.automatic_session_open:
             self.open()
@@ -84,6 +86,8 @@ class AiohttpClient(BaseModel):
     session: Optional[Any] = None
     automatic_session_open: bool = True
     automatic_session_close: bool = True
+
+    fetch_image_from_page: bool = False
 
     def model_post_init(self, __context: Any) -> None:
         if self.automatic_session_open:

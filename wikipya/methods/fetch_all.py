@@ -7,7 +7,10 @@ if TYPE_CHECKING:
 
 
 async def fetch_all(
-    self: "MediaWikiAbstract", query: str | int, to_section: int = 0
+    self: "MediaWikiAbstract",
+    query: str | int,
+    to_section: int = 0,
+    close_session: bool = True
 ) -> tuple[Page, Image | None, str | None]:
     self.automatic_session_close = False
 
@@ -26,9 +29,15 @@ async def fetch_all(
     page = await self.page(result.title, to_section=to_section)
 
     try:
-        image = await self.image(page.title)
-    except (NotFound, KeyError):
+        if self.fetch_image_from_page:
+            image = page.fetch_image()
+            image.source = self.url.cleaned + image.source
+        else:
+            image = await self.image(page.title)
+    except Exception:
         image = None
+ 
+    if close_session:
+        await self.close()
 
-    await self.close()
     return page, image, result.link

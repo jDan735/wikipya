@@ -16,7 +16,7 @@ class Params(Struct, frozen=True, kw_only=True):
     search_limit: int = 1
     search_query: str
     search_query_id: int
-    image_query: str
+    image_query: str | None = None
 
 
 clients = (
@@ -68,4 +68,18 @@ clients = (
             image_query="Германская империя"
         ),
     ),
+    (
+        Wikipya(
+            base_url="https://www.blood-wiki.org/api.php",
+            params=dict(
+                fetch_image_from_page=True,
+                **DEFAULT_WIKIPYA_PARAMS
+            )
+        ),
+        Params(
+            search_query="blood",
+            search_query_id=147,
+            image_query=None
+        )
+    )
 )

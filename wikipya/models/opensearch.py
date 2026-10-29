@@ -1,5 +1,3 @@
-from typing import Optional
-
 from msgspec import Struct
 
 
@@ -9,7 +7,7 @@ class OpenSearch(Struct, frozen=True, array_like=True):
     descriptions: list[str]
     links: list[str]
 
-    def prettify(self) -> list[OpenSearchResult]:
+    def prettify(self) -> list["OpenSearchResult"]:
         return [
             OpenSearchResult(title, self.links[i])
             for i, title in enumerate(self.titles)

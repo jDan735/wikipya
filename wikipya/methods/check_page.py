@@ -1,6 +1,6 @@
 from ..exceptions import NotFound
 
-from msgspec import defstruct, Struct, json, field
+from msgspec import defstruct, Struct, field
 
 from typing import TYPE_CHECKING
 

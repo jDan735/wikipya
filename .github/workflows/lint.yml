@@ -1,6 +1,6 @@
 name: flake8 Lint
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   flake8-lint:
@@ -15,3 +15,7 @@ jobs:
           python-version: "3.13"
       - name: flake8 Lint
         uses: py-actions/flake8@v2
+        with:
+          max-line-length: "72"
+          # path: "src"
+          plugins: "flake8-bugbear flake8-black"

@@ -1,26 +1,17 @@
-name: Run Python Tests
+name: flake8 Lint
 
-on: [ push ]
+on: [push, pull_request]
+
 jobs:
-  ruff:
+  flake8-lint:
     runs-on: ubuntu-latest
-
+    name: Lint
     steps:
-    - uses: actions/checkout@v6
-      with:
-        persist-credentials: false
-    - name: Set up Python
-      uses: actions/setup-python@v6
-      with:
-        python-version: "3"
-    - name: Install uv
-      uses: astral-sh/setup-uv@v7
-      with:
-        version: latest
-        enable-cache: true
-    - name: Install dependencies
-      run: uv sync
-    - name: Install ruff != 16
-      run: uv add "ruff<0.16"
-    - name: Type check with ruff
-      run: uv run ruff check wikipya
+      - name: Check out source repository
+        uses: actions/checkout@v3
+      - name: Set up Python environment
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.13"
+      - name: flake8 Lint
+        uses: py-actions/flake8@v2

@@ -36,7 +36,7 @@ async def fetch_all(
             image = await self.image(page.title)
     except Exception:
         image = None
- 
+
     if close_session:
         await self.close()
 

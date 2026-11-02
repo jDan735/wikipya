@@ -14,7 +14,7 @@ class PageQuery(Struct, frozen=True):
         id: int = field(name="pageid", default=0)
         missing: bool = False
 
-    query: defstruct("PagesList", [("pages", list[Page])], frozen=True)
+    query: defstruct("PagesList", [("pages", list[Page])], frozen=True) # noqa
 
 
 async def check_page(self: "MediaWikiAbstract", query: str) -> tuple[int, str]:

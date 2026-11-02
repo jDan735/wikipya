@@ -1,6 +1,5 @@
 from msgspec import Struct
 
-from wikipya.clients import MediaWikiAbstract, Fandom, Wikipedia, MediaWiki
 from wikipya import Wikipya
 
 DEFAULT_WIKIPYA_PARAMS = dict(

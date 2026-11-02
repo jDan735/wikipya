@@ -1,18 +1,13 @@
 import asyncio
+from pprint import pprint
 
-import sys
-
-sys.path.insert(0, "..")
 from wikipya import Wikipya
-
 
 wiki = Wikipya(base_url="https://fallout.fandom.com/ru/api.php")
 
 
 async def main():
     results = await wiki.fandom_search("винт", limit=2)
-
-    from pprint import pprint
 
     pprint(results)
 

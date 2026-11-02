@@ -1,5 +1,4 @@
 from msgspec import Struct, field
-from pydantic import BaseModel, Field
 from typing import Optional
 
 
@@ -19,7 +18,7 @@ class ContentUrls(Struct, frozen=True):
 
 class Summary(Struct, frozen=True, kw_only=True):
     title: str
-    page_id: int = Field(name="pageid")
+    page_id: int = field(name="pageid")
 
     thumbnail: Optional[Image] = None
     original_image: Optional[Image] = field(

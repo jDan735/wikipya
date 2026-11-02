@@ -1,6 +1,5 @@
 from msgspec import Struct
 
-from wikipya.clients import MediaWikiAbstract, Fandom, Wikipedia, MediaWiki
 from wikipya import Wikipya
 
 DEFAULT_WIKIPYA_PARAMS = dict(
@@ -77,8 +76,8 @@ clients = (
             )
         ),
         Params(
-            search_query="blood",
-            search_query_id=147,
+            search_query="Blood",
+            search_query_id=32,
             image_query=None
         )
     )

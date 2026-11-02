@@ -1,5 +1,7 @@
+import types
 from typing import Any
-from .clients import MediaWiki, Fandom, Wikipedia, MediaWikiAbstract
+
+from .clients import Fandom, MediaWiki, MediaWikiAbstract, Wikipedia
 from .models import MediawikiUrl
 
 try:
@@ -12,7 +14,7 @@ def Wikipya(
     lang: str = "ru",
     base_url: str = "https://{lang}.wikipedia.org/w/api.php",
     prefix: str = "/w",
-    params: dict[Any, Any] = {},
+    params: dict[Any, Any] = types.MappingProxyType({}),
 ) -> MediaWikiAbstract:
     match URL(base_url).host.split(".")[-2]:
         case "wikipedia":

@@ -8,8 +8,9 @@ if TYPE_CHECKING:
 
 
 async def summary(self: "MediaWikiAbstract", title: str) -> Summary:
-    _, res = await self.get_html(
-        f"{self.url.cleaned}api/rest_v1/page/summary/{title}"
+    _, res = await self.get(
+        f"/api/rest_v1/page/summary/{title}",
+        type=Summary,
     )
 
-    return json.decode(res, type=Summary)
+    return res

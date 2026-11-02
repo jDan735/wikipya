@@ -20,8 +20,17 @@ test = {cmd = "python -m unittest tests/basic_tests.py"}
 tree = {cmd = "pdm list --tree"}
 lint = {cmd = "pdm run flake8 --exclude .venv"}
 
+[tool.flake8]
+application-import-names = ["wikipya", "types"]
+
+strictness= "short"
+docstring_style= "sphinx"
+max-line-length = 88
+inline-quotes = "\""
+
 [dependency-groups]
 dev = [
     "parameterized>=0.9.0",
     "flake8-bugbear>=26.10.27",
+    "Flake8-pyproject>=1.2.4",
 ]

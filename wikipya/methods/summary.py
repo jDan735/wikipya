@@ -1,5 +1,4 @@
 from ..models import Summary
-from msgspec import json
 
 from typing import TYPE_CHECKING
 

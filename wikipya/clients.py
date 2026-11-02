@@ -106,6 +106,9 @@ class AiohttpClient(BaseModel):
         type: Any = Any,
         **params: Any
     ) -> tuple[aiohttp.Response, Any]:
+        if url and not url.startswith("http"):
+            url = self.url.cleaned + url
+
         res: aiohttp.Response = await self.session.get(
             str(url or self.url),
             params={**self.default_params, **params},

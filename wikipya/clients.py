@@ -19,7 +19,7 @@ from msgspec import DecodeError, json
 HEADERS: dict[str, str] = {
     "User-Agent": (
         "Mozilla/5.0 (iPad; CPU OS 12_2 like Mac OS X) AppleWebKit/605.1.15"
-        " (KHTML, like Gecko) Mobile/15E148",
+        " (KHTML, like Gecko) Mobile/15E148"
     ),
     "Accept-Encoding": "gzip",
 }
@@ -63,11 +63,8 @@ class HttpxClient(BaseModel):
         except DecodeError:
             raise ValueError("Broken input (not json?)\n" + res.text)
 
-        try:
-            if error := _.get("error"):
-                raise ParseError(f"{error['code']}: {error['info']}")
-        except:  # noqa: E722
-            pass
+        if error := _.get("error"):
+            raise ParseError(f"{error['code']}: {error['info']}")
 
         return res, _
 
@@ -120,16 +117,16 @@ class AiohttpClient(BaseModel):
         try:
             _: Any = json.decode(text, type=type)
         except DecodeError:
-            raise ValueError(text)
+            try:
+                _ = json.decode(text)
+
+                if error := _.get("error"):
+                    raise ParseError(f"{error['code']}: {error['info']}")
+            except Exception:
+                raise ValueError(text)
 
         if self.automatic_session_close:
             await self.session.close()
-
-        try:
-            if error := _.get("error"):
-                raise ParseError(f"{error['code']}: {error['info']}")
-        except:  # noqa: E722
-            pass
 
         return res, _
 

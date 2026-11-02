@@ -63,7 +63,7 @@ class Test(IsolatedAsyncioTestCase):
 
     @parameterized.expand(clients)
     async def test_check_page(self, client: Wikipya, params: Params):
-        page_id = await client.check_page(params.search_query)
+        page_id, title = await client.check_page(params.search_query)
         assert page_id == params.search_query_id
 
     @parameterized.expand([clients[0]])

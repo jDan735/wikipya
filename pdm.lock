@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.1"
-content_hash = "sha256:3a74b7c1fc87276a13b1b3ce24442eb3b9fe4ce2fc51c782c0ecf81e5badc4b7"
+content_hash = "sha256:435c94f00603643554b1fd030591e5438f7f9cd19245123d2371e604d3094bb8"
 
 [[metadata.targets]]
 requires_python = ">=3.10,<3.15"
@@ -204,10 +204,41 @@ name = "attrs"
 version = "26.1.0"
 requires_python = ">=3.9"
 summary = "Classes Without Boilerplate"
-groups = ["default"]
+groups = ["default", "dev"]
 files = [
     {file = "attrs-26.1.0-py3-none-any.whl", hash = "sha256:c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309"},
     {file = "attrs-26.1.0.tar.gz", hash = "sha256:d03ceb89cb322a8fd706d4fb91940737b6642aa36998fe130a9bc96c985eff32"},
+]
+
+[[package]]
+name = "flake8"
+version = "7.4.1"
+requires_python = ">=3.10"
+summary = "the modular source code checker: pep8 pyflakes and co"
+groups = ["dev"]
+dependencies = [
+    "mccabe<0.8.0,>=0.7.0",
+    "pycodestyle<2.16.0,>=2.15.0",
+    "pyflakes<4.1.0,>=4.0.0",
+]
+files = [
+    {file = "flake8-7.4.1-py2.py3-none-any.whl", hash = "sha256:78480274a6d7289d9cb8eafeda241fac57d4ea687d26e32dfdca37b72cdeddad"},
+    {file = "flake8-7.4.1.tar.gz", hash = "sha256:84ea5afcaf344487b0ea5baaebb8100f4cfaebc01f755998f75876664029f587"},
+]
+
+[[package]]
+name = "flake8-bugbear"
+version = "26.10.27"
+requires_python = ">=3.10"
+summary = "A plugin for flake8 finding likely bugs and design problems in your program. Contains warnings that don't belong in pyflakes and pycodestyle."
+groups = ["dev"]
+dependencies = [
+    "attrs>=22.2.0",
+    "flake8>=7.2.0",
+]
+files = [
+    {file = "flake8_bugbear-26.10.27-py3-none-any.whl", hash = "sha256:84be4e7533f9e9e4c98c1fdadecddb9b527aaea32509f7779ce2e6ec79ba012d"},
+    {file = "flake8_bugbear-26.10.27.tar.gz", hash = "sha256:2dbacb5149856a38ff539f21098ec5f1b70d8ebe0c87fe107dacda28a2d83955"},
 ]
 
 [[package]]
@@ -356,6 +387,17 @@ groups = ["default"]
 files = [
     {file = "idna-3.20-py3-none-any.whl", hash = "sha256:ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c"},
     {file = "idna-3.20.tar.gz", hash = "sha256:a7db850025b95ded1eae8a46181a1a6c56c92c96f0e2b005d9ff8dc0210cab44"},
+]
+
+[[package]]
+name = "mccabe"
+version = "0.7.0"
+requires_python = ">=3.6"
+summary = "McCabe checker, plugin for flake8"
+groups = ["dev"]
+files = [
+    {file = "mccabe-0.7.0-py2.py3-none-any.whl", hash = "sha256:6c2d30ab6be0e4a46919781807b4f0d834ebdd6c6e3dca0bda5a15f863427b6e"},
+    {file = "mccabe-0.7.0.tar.gz", hash = "sha256:348e0240c33b60bbdf4e523192ef919f28cb2c3d7d5c7794f74009290f236325"},
 ]
 
 [[package]]
@@ -730,6 +772,17 @@ files = [
 ]
 
 [[package]]
+name = "pycodestyle"
+version = "2.15.0"
+requires_python = ">=3.10"
+summary = "Python style guide checker"
+groups = ["dev"]
+files = [
+    {file = "pycodestyle-2.15.0-py2.py3-none-any.whl", hash = "sha256:12fd2f73c7b8ee8845a0431111df8faf4c1a07d6e64e2ee7f0c74014dab14181"},
+    {file = "pycodestyle-2.15.0.tar.gz", hash = "sha256:318f5db083869b4c4dad922d0b11124fb27ab181b6730b93371da671e31bd50e"},
+]
+
+[[package]]
 name = "pydantic"
 version = "2.14.1"
 requires_python = ">=3.10"
@@ -855,6 +908,17 @@ files = [
     {file = "pydantic_core-2.50.1-pp311-pypy311_pp73-musllinux_1_1_x86_64.whl", hash = "sha256:5f3cae32fc46121f787cb2486de9cf95a8bf72aec5cc78f64c606fa1735a6ef5"},
     {file = "pydantic_core-2.50.1-pp311-pypy311_pp73-win_amd64.whl", hash = "sha256:7f476456ac2bb0d937f75191494a09c83a30765fea4f70f3b404942fe25f6cdf"},
     {file = "pydantic_core-2.50.1.tar.gz", hash = "sha256:e50d7b94baac6c7d09927fa5ca5800a0c7ee5015c7fcff65beb3a1931b5a6e09"},
+]
+
+[[package]]
+name = "pyflakes"
+version = "4.0.3"
+requires_python = ">=3.10"
+summary = "passive checker of Python programs"
+groups = ["dev"]
+files = [
+    {file = "pyflakes-4.0.3-py2.py3-none-any.whl", hash = "sha256:330ba92b8c1db2eb0b8f4068f6c58674e2649a99e334769aa50e3e9c5b11c23a"},
+    {file = "pyflakes-4.0.3.tar.gz", hash = "sha256:94762a3a5a343a79b28754f96c554bce057a592a4896907d73f0369fe824e053"},
 ]
 
 [[package]]

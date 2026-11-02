@@ -18,8 +18,10 @@ dependencies = [
 [tool.pdm.scripts]
 test = {cmd = "python -m unittest tests/basic_tests.py"}
 tree = {cmd = "pdm list --tree"}
+lint = {cmd = "pdm run flake8 --exclude .venv"}
 
 [dependency-groups]
 dev = [
     "parameterized>=0.9.0",
+    "flake8-bugbear>=26.10.27",
 ]
